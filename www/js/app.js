@@ -66,10 +66,9 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 			requireAuth: false
 		}
 	})
-    .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html'
+    .state('principal', {
+    url: '/principal',
+    templateUrl: 'templates/Principal.html'
 	
   })
 

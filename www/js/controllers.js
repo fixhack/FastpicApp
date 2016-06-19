@@ -112,7 +112,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	function successAuth(res) {
         $localStorage.token = res.access_token;
-		$state.go('slider');
+		$state.go('principal');
     }
 	$scope.submit = function() {
 		var formData = {
