@@ -23,7 +23,9 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider,$ocLazyLoadProvider,$httpProvider) {
+.config(function($stateProvider, $urlRouterProvider,$ocLazyLoadProvider,$httpProvider,$ionicConfigProvider) {
+
+	$ionicConfigProvider.tabs.position('bottom');
    $urlRouterProvider.when('', '/');
    
    	$ocLazyLoadProvider.config({
@@ -68,18 +70,20 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 	})
     .state('principal', {
     url: '/principal',
-    templateUrl: 'templates/Principal.html'
-	
+    templateUrl: 'templates/Principal.html',
+    data: {
+			requireAuth: true
+	}
   })
 
   // Each tab has its own nav history stack:
 
-  .state('tab.dash', {
-    url: '/dash',
+  .state('principal.barcodes', {
+    url: '/barcodes',
     views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
+      'tab-barcodes': {
+        templateUrl: 'templates/tab-barcodes.html',
+        controller: 'BarcodesCtrl'
       }
     }
   })

@@ -122,8 +122,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 
         UserService.signin(formData, successAuth, function () {
             var alertPopup = $ionicPopup.alert({
-                title: 'Login failed!',
-                template: 'Please check your credentials!'
+                title: 'Login failed!'
             });
         })
 	};
@@ -144,7 +143,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 })
 
-.controller('DashCtrl', function($scope) {})
+.controller('BarcodesCtrl', function($scope) {})
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called

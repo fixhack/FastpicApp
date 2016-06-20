@@ -1,14 +1,19 @@
-<ion-view tittle-view="Principal" name="login-view" >
-<ion-content class="has-footer">
-  Some content!
+<ion-view view-title="Principal">
+<ion-content class="padding">
 </ion-content>
-<ion-footer-bar align-title="left" class="bar-assertive">
-  <div class="buttons">
-    <button class="button">Left Button</button>
-  </div>
-  <h1 class="title">Title!</h1>
-  <div class="buttons" ng-click="doSomething()">
-    <button class="button">Right Button</button>
-  </div>
-</ion-footer-bar>
+ <ion-tabs >
+  <ion-tab title="Codes" icon-on="ion-ios-barcode" icon-off="ion-ios-barcode-outline" href="#/principal/barcodes">
+  <ion-nav-view name="tab-barcodes"></ion-nav-view>
+    <!-- Tab 1 content -->
+  </ion-tab>
+   <ion-tab title="Users" icon-on="ion-ios-people" icon-off="ion-ios-people-outline">
+    <!-- Tab 1 content -->
+  </ion-tab>
+
+  <ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
+    <!-- Tab 3 content -->
+  </ion-tab>
+  
+</ion-tabs>
+
 </ion-view>
