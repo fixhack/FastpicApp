@@ -104,11 +104,26 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             });
         }
 })
-.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage,$ionicPopup) {
+.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform) {
 
 	
 	$scope.data = {};
 	
+	var doCustomBack= function() {
+	    // do something interesting here
+		//$state.go('login');
+		//$ionicHistory.goBack();
+		ionic.Platform.exitApp();
+		}; 
+		
+	// registerBackButtonAction() returns a function which can be used to deregister it
+	var deregisterHardBack= $ionicPlatform.registerBackButtonAction(
+		doCustomBack, 101
+	);
+
+	$scope.$on('$destroy', function() {
+		deregisterHardBack();
+	});
 	
 	function successAuth(res) {
         $localStorage.token = res.access_token;
@@ -143,8 +158,25 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 })
 
-.controller('BarcodesCtrl', function($ionicPlatform, $scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state) {
+.controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $timeout) 
+{
+	var oldSoftBack = $rootScope.$ionicGoBack;
 	
+	$rootScope.$ionicGoBack = function() {
+		$ionicHistory.goBack();
+	};
+	var doCustomBack= function() {
+	    // do something interesting here
+		//console.log($state.current.url);
+		if ($state.current.url == "/login"){
+			ionic.Platform.exitApp();
+		}
+		else{
+			$state.go('login');
+		}
+		//	$ionicHistory.goBack();
+		}; 
+		
 	// registerBackButtonAction() returns a function which can be used to deregister it
 	var deregisterHardBack= $ionicPlatform.registerBackButtonAction(
 		doCustomBack, 101
@@ -161,6 +193,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	
 	$scope.ScanBarcode = function() {
+		
 	      $cordovaBarcodeScanner.scan().then(function(barcodeData) 
 		  {
 				var s = "Result: " + barcodeData.text + "<br/>" +
@@ -239,16 +272,33 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	// Apartado de Manipulación de Codigos
 	
 	$scope.addCode = function() {
-        $('#myModalAddCode').modal();
-	};
+		$cordovaBarcodeScanner.scan().then(function(barcodeData) 
+				  {
+						var s = "Result: " + barcodeData.text + "<br/>" +
+						"Format: " + barcodeData.format + "<br/>" +
+						"Cancelled: " + barcodeData.cancelled;
+						console.log(s);
+						if (barcodeData.cancelled == true)
+							{
+							 var alertPopup = $ionicPopup.alert({
+					                title: 'Scan failed!'
+					            });
+							}
+						//$scope.find(barcodeData.text);
+						$scope.saveCode(barcodeData.text);
+			      }, function(error) {
+			        alert("Scanning failed: " + error);
+			      });
+       };
+        	   
 	
-	$scope.saveCode = function() {
-		$http.post($rootScope.server + '/fastpic/barcode/insert', { barcode: $('#insertCode').val(), images: null })
+	$scope.saveCode = function(id) {
+		$http.post($rootScope.server + '/fastpic/barcode/insert', { barcode: id, images: null })
         .then(function (result) {
         	$scope.loadCodes();
         });
-        $('#myModalAddCode').modal('hide');
-        $('#insertCode').val('');
+      //  $('#myModalAddCode').modal('hide');
+      //  $('#insertCode').val('');
 	}
 	
 	$scope.cancelAddCode = function() {

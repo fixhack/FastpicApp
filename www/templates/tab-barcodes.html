@@ -25,17 +25,17 @@
   	</div>
   </div>
   <ion-list id="lista-codigos">
-    <ion-item  id='button-{{codigo.barcode}}' 
+    <ion-item id='button-{{codigo.barcode}}' 
     		   ng-if="codigo.status == null || codigo.status == 'E'" 
     		   ng-if="barcodes.length > 0" 
     		   ng-repeat="codigo in barcodes" >{{codigo.barcode}}
-		<ion-option-button class="button button-positive" ng-click="selectCode(codigo.barcode)">Select</ion-option-button>
+		<ion-option-button   class="button button-positive" ng-click="selectCode(codigo.barcode)">Select</ion-option-button>
 	</ion-item>
     <ion-item  id='button-{{codigo.barcode}}' 
                ng-if="codigo.status == 'D'" 
                ng-if="barcodes.length > 0" 
-               ng-repeat="codigo in barcodes" >{{codigo.barcode}}
-        <ion-option-button class="button button-assertive"  ng-click="selectCode(codigo.barcode)">Disabled</ion-option-button>
+               ng-repeat="codigo in barcodes" >{{codigo.barcode}} - Disabled
+        <ion-option-button class="button button-assertive"  ng-click="selectCode(codigo.barcode)">Select</ion-option-button>
     </ion-item>
     <ion-item ng-if="barcodes.length < 1">No existen codigos</ion-item>
   </ion-list>
