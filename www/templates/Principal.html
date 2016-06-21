@@ -6,10 +6,11 @@
   <ion-nav-view name="tab-barcodes"></ion-nav-view>
     <!-- Tab 1 content -->
   </ion-tab>
-   <ion-tab title="Users" icon-on="ion-ios-people" icon-off="ion-ios-people-outline">
+   <ion-tab title="Users" icon-on="ion-ios-people" icon-off="ion-ios-people-outline" href="#/principal/users">
+   <ion-nav-view name="tab-users"></ion-nav-view>
     <!-- Tab 1 content -->
   </ion-tab>
-  <ion-tab title="Log out" icon-on="ion-log-out" icon-off="ion-log-out">
+  <ion-tab title="Log out" icon-on="ion-log-out" icon-off="ion-log-out" on-select="logout()">
     <!-- Tab 1 content -->
   </ion-tab>
 </ion-tabs>

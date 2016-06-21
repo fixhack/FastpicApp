@@ -104,6 +104,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             });
         }
 })
+.controller('PrincipalCtrl', function($scope, $localStorage, $state, UserService) {
+	function successAuth(res) {
+		if (res !== undefined) {
+			$localStorage.token = res.access_token;
+		}
+        $state.go('login');
+    }
+	
+	$scope.logout = function() {
+		UserService.logout(successAuth);
+	}
+})
 .controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform) {
 
 	
@@ -127,7 +139,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	function successAuth(res) {
         $localStorage.token = res.access_token;
-		$state.go('principal');
+		$state.go('principal.barcodes');
     }
 	$scope.submit = function() {
 		var formData = {
@@ -157,7 +169,144 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 })
+.controller('UsersCtrl', function($scope, $rootScope, UserService, $http, $cargaPropiedades) 
+{
+/*
+ * $cargaPropiedades.getServer().success(function(response) { $rootScope.server =
+ * response.server; })
+ */
+		
+	$scope.loadUsers = function() {
+		$cargaPropiedades.getServer().success(function(response) {
+			$rootScope.server = response.server;
+			$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
+				$scope.users = response.data.User;
+				if ($scope.currentUser !== undefined) {
+					$scope.selectUser($scope.currentUser.username);
+				}
+			});
+		})
+	}
+	
+	$scope.selectUser = function(user) {
+		// $('#enable-code').addClass('hidden');
+		$('.list-group-item').each(function (index) {
+            var cl = $(this).attr('class');
+            if (cl.search("active") != -1) {
+                $(this).attr('class', 'list-group-item')
+            }
+        })
+		$('#button-' + user).button('toggle');
+		// $('#disenableCodes').empty();
+		// showDataScreen(codigo);
+		showUserData(user);
+	}	
+	
+	/*
+	 * $http.get($rootScope.server +
+	 * '/fastpic/barcode/user/getAllUsers').then(function(response) {
+	 * $scope.users = response.data; //console.log($scope.users);
+	 * //console.log(response.data.User.length);
+	 * 
+	 * if (response.data.User.length >= 1) { for (i = 0; i <
+	 * response.data.User.length; i++) {
+	 * //console.log(response.data.User[i].username);
+	 * $('#lista-usuarios').append("<button type='button'
+	 * class='list-group-item' id-value='" + response.data.User[i].username + "'
+	 * id='button" + response.data.User[i].username + "'>" +
+	 * response.data.User[i].username + "</button>"); }
+	 * $('.list-group-item').on('click', function () {
+	 * $('.list-group-item').each(function (index) { var cl =
+	 * $(this).attr('class'); if (cl.search("active") != -1) {
+	 * $(this).attr('class', 'list-group-item') } }) $(this).button('toggle'); //
+	 * showDataScreen($(this).text()); }); } else {
+	 *  } });
+	 */
+	
+	
+	
+	$scope.addUser = function() 
+	{
+		$('#myModalLabel').empty();
+    	$('#myModalLabel').append("Add User")
+    	$('#myModalBody').empty();
+		$('.modal-body').append("<div class='input-group'><span class='input-group-addon' id='basic-addon-user'>Name</span><input type='text' class='form-control' aria-describedby='basic-addon-user' id='insert-name'/></div>")
+        $('.modal-body').append("<div class='input-group'><span class='input-group-addon' id='basic-addon-user'>User</span><input type='text' class='form-control' aria-describedby='basic-addon-user' id='insert-user'/></div>")
+		$('.modal-body').append("<div class='input-group'><span class='input-group-addon' id='basic-addon-pas'>Password</span><input type='password' class='form-control' aria-describedby='basic-addon-user' id='insert-pass'/></div>")
+        $('#myModal').modal();
+        $('#cancel-modal-button').on('click', function () {
+            $('#myModal').modal('hide');
+        });
+        $('#save-modal-button').on('click', function () {
+			
+           $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $('#insert-name').val(), password: $('#insert-pass').val(), ultimoAcceso: null, username: $('#insert-user').val()})
 
+            $('#myModal').modal('hide');
+        });
+	};
+	
+	$scope.updateUser = function() 
+	{
+        $('#myModalChangePassword').modal();
+	};
+	
+	$scope.cancelChgPassword = function() {
+		$('#insert-pass').val('');
+		$('#myModalChangePassword').modal('hide');
+	}
+	
+	$scope.changePassword = function() {
+		$http.post($rootScope.server + '/fastpic/barcode/user/update', { nombre: $scope.currentUser.nombre, password: $('#insert-pass').val(), ultimoAcceso: null, username: $scope.currentUser.username})
+    	console.log($scope.currentUser);
+		$('#insert-pass').val('');
+        $('#myModalChangePassword').modal('hide');
+	}
+	
+	$scope.delUser = function() {
+		$http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: $scope.currentUser.username })
+    	.then(function(result){
+    		$scope.loadUsers();
+    	})
+	}
+	
+	$scope.searchUser = function() {
+		$('#lista-usuarios').empty();
+		// console.log($scope.users.User.length);
+		for (i=0; i < $scope.users.User.length; i++)
+		{
+			if( $scope.users.User[i].username.toUpperCase().indexOf($scope.searchUsr.toUpperCase()) > -1 )
+			{			        
+				// $('#panel-info').addClass('hidden');
+				$('#lista-usuarios').append("<button type='button' class='list-group-item' id-value='" + $scope.users.User[i].username + "' id='button" + $scope.users.User[i].username + "'>" + $scope.users.User[i].username + "</button>");			
+			}			
+			if($scope.searchUsr.toUpperCase().length == 0){
+				// $('#panel-info').addClass('hidden');
+			}			
+		}
+		$('.list-group-item').on('click', function () {
+					$('.list-group-item').each(function (index) {
+						var cl = $(this).attr('class');
+						if (cl.search("active") != -1) {
+							$(this).attr('class', 'list-group-item')
+						}
+					})
+					$(this).button('toggle');
+				});
+		
+	}
+	
+	function showUserData(user) 
+	{
+        //$('#image-container-3').empty();
+        $('#panel-info').removeClass('hidden');
+        $http.post($rootScope.server + '/fastpic/barcode/user/getUserByObject/normal', { username: user }).then(function(response) {
+        	$scope.currentUser = response.data.User[0];
+        });
+        
+    }
+	
+	
+})
 .controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $cordovaCamera ,$timeout, $ionicTabsDelegate) 
 {
 	var oldSoftBack = $rootScope.$ionicGoBack;

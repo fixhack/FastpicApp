@@ -71,6 +71,7 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
     .state('principal', {
     url: '/principal',
     templateUrl: 'templates/Principal.html',
+    controller: "PrincipalCtrl",
     data: {
 			requireAuth: true
 	}
@@ -84,6 +85,16 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
       'tab-barcodes': {
         templateUrl: 'templates/tab-barcodes.html',
         controller: 'BarcodesCtrl'
+      }
+    }
+  })
+  
+  .state('principal.users', {
+    url: '/users',
+    views: {
+      'tab-users': {
+        templateUrl: 'templates/tab-user.html',
+        controller: "UsersCtrl"
       }
     }
   })
