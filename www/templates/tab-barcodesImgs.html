@@ -1,0 +1,23 @@
+<ion-view view-title="Barcodes">
+	<ion-nav-buttons side="right">
+        <button ng-click="slider()" class="button button-icon icon ion-images">Slider</button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <button ng-click="back()" class="button button-icon icon ion-chevron-left">Back</button>
+    </ion-nav-buttons>
+  <br></br>
+  <div class="row">
+	 <div class="col col-50">
+	 	<button type='button' class='button button-balanced' id='add-code' ng-click="saveImg()">Upload Image</button>
+	  </div> 
+	  <div class="col col-50">
+	 	<button type='button' class='button button-balanced' id='add-code' ng-click="addCode()">Change Order</button>
+	 	 </div> 
+	 </div>
+	<div class="row">
+	 <div class="col col-50" aling="right">
+	 	<button type='button' class='button button-assertive' id='add-code' ng-click="addCode()">Remove Image</button>
+	 </div>      
+  </div>
+  </ion-content>
+</ion-view>

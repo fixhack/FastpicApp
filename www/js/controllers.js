@@ -158,7 +158,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 })
 
-.controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $timeout) 
+.controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $cordovaCamera ,$timeout, $ionicTabsDelegate) 
 {
 	var oldSoftBack = $rootScope.$ionicGoBack;
 	
@@ -190,7 +190,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		//console.log($scope.server);	
 		$state.go('slider');
 	}
-	
+	$scope.back = function() {
+		//console.log($scope.server);	
+		$state.go('principal');
+	}
 	
 	$scope.ScanBarcode = function() {
 		
@@ -228,16 +231,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 	
 	$scope.selectCode = function(codigo) {
-		//$('#enable-code').addClass('hidden');
-		$('.list-group-item').each(function (index) {
-            var cl = $(this).attr('class');
-            if (cl.search("active") != -1) {
-                $(this).attr('class', 'list-group-item')
-            }
-        })
-		//$('#button-' + codigo).button('toggle');
-		//$('#disenableCodes').empty();
-		//showDataScreen(codigo);
+		//console.log($ionicTabsDelegate);
+		$state.go('barcodesImgs');
         $http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
         	$scope.currentBarcode = response.data.Barcode[0];
         });
@@ -306,22 +301,28 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         $('#insertCode').val('');
 	}
 
-    $scope.enableCode = function() {
-    	$scope.currentBarcode.status = 'D';
-    	console.log($scope.currentBarcode);
-    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
-    	.then(function(result) {
-    		$scope.loadCodes();
-    	});
+    $scope.enableCode = function(codigo) {
+    	$http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
+        	$scope.currentBarcode = response.data.Barcode[0];
+        	$scope.currentBarcode.status = 'D';
+        	console.log($scope.currentBarcode);
+        	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+        	.then(function(result) {
+        		$scope.loadCodes();
+        	});
+        });
     }
     
-    $scope.disableCode = function() {
-    	$scope.currentBarcode.status = 'E';
-    	console.log($scope.currentBarcode);
-    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
-    	.then(function(result) {
-    		$scope.loadCodes();
-    	});
+    $scope.disableCode = function(codigo) {
+    	$http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
+        	$scope.currentBarcode = response.data.Barcode[0];
+        	$scope.currentBarcode.status = 'E';
+	    	console.log($scope.currentBarcode);
+	    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+	    	.then(function(result) {
+	    		$scope.loadCodes();
+	    	});
+        });
     }
     
     // Apartado de Manipulación de Imagenes
@@ -338,21 +339,34 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
     }
     
     $scope.saveImg = function() {
-    	var reader = new FileReader();
-        var f = document.getElementById("MyFileUpload").files;
-        var imageString;
-        reader.onload = function(readerEvt) {
-        	var binaryString = readerEvt.target.result;
-        	imageString = btoa(binaryString);
-        	$scope.currentBarcode.images.push({ imageData: imageString, imageOrder: parseInt($('#MyImageOrder').val()) });
+    	var options = {
+	      quality: 50,
+	      destinationType: Camera.DestinationType.DATA_URL,
+	      sourceType: Camera.PictureSourceType.CAMERA,
+	      allowEdit: false,
+	      encodingType: Camera.EncodingType.JPEG,
+	      targetWidth: 100,
+	      targetHeight: 100,
+	      popoverOptions: CameraPopoverOptions,
+	      saveToPhotoAlbum: true,
+		  correctOrientation:true
+	    };
+
+	    $cordovaCamera.getPicture(options).then(function(imgData) {
+	    	console.log("break1");
+	    	var imageString = "data:image/jpeg;base64," + imgData;
+	      $scope.currentBarcode.images.push({ imageData: imageString, imageOrder: 3 });
+	      console.log("break2");
         	console.log($scope.currentBarcode);
         	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
         	.then(function(result) {
         		$scope.selectCode($scope.currentBarcode.barcode);
+        		console.log("break3");
         	});
-        }
-        reader.readAsBinaryString(f[0]);
-        $('#myModal').modal('hide');
+	    }, function(err) {
+	      console.log("cancelado");
+	    });
+        	
     }
     
 	$scope.ChOrder = function() {
@@ -414,7 +428,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         });
     }
 	
-	
+	$scope.takePhoto=function (){
+	    
+	}
+    
     function showDataScreen2(id) 
 		{
 		
@@ -524,6 +541,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	return {
 		link: link
 	}
+	
 })
 
 .controller('ChatsCtrl', function($scope, Chats) {

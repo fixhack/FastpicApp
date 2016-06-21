@@ -87,6 +87,16 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
       }
     }
   })
+  
+    .state('barcodesImgs', {
+    url: '/barcodesImgs',
+    templateUrl: 'templates/tab-barcodesImgs.html',
+        controller: 'BarcodesCtrl',
+        data: {
+			requireAuth: true
+	}
+      })
+  
 
   .state('tab.chats', {
       url: '/chats',
