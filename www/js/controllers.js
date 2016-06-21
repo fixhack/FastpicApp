@@ -143,7 +143,338 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 })
 
-.controller('BarcodesCtrl', function($scope) {})
+.controller('BarcodesCtrl', function($ionicPlatform, $scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state) {
+	
+	// registerBackButtonAction() returns a function which can be used to deregister it
+	var deregisterHardBack= $ionicPlatform.registerBackButtonAction(
+		doCustomBack, 101
+	);
+
+	$scope.$on('$destroy', function() {
+		deregisterHardBack();
+	});
+	
+	$scope.slider = function() {
+		//console.log($scope.server);	
+		$state.go('slider');
+	}
+	
+	
+	$scope.ScanBarcode = function() {
+	      $cordovaBarcodeScanner.scan().then(function(barcodeData) 
+		  {
+				var s = "Result: " + barcodeData.text + "<br/>" +
+				"Format: " + barcodeData.format + "<br/>" +
+				"Cancelled: " + barcodeData.cancelled;
+				console.log(s);
+				if (barcodeData.cancelled == true)
+					{
+					 var alertPopup = $ionicPopup.alert({
+			                title: 'Scan failed!'
+			            });
+					}
+				//$scope.find(barcodeData.text);
+				$scope.searchBarcode(barcodeData.text);
+	      }, function(error) {
+	        alert("Scanning failed: " + error);
+	      });
+		}
+	
+	$scope.columnNum = 3;
+	
+	$scope.loadCodes = function() {
+		$cargaPropiedades.getServer().success(function(response) {
+			$rootScope.server = response.server;
+			$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
+				$scope.barcodes = response.data.Barcode;
+				if ($scope.currentBarcode !== undefined) {
+					$scope.selectCode($scope.currentBarcode.barcode);
+				}
+			});
+		})
+	}
+	
+	$scope.selectCode = function(codigo) {
+		//$('#enable-code').addClass('hidden');
+		$('.list-group-item').each(function (index) {
+            var cl = $(this).attr('class');
+            if (cl.search("active") != -1) {
+                $(this).attr('class', 'list-group-item')
+            }
+        })
+		//$('#button-' + codigo).button('toggle');
+		//$('#disenableCodes').empty();
+		//showDataScreen(codigo);
+        $http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
+        	$scope.currentBarcode = response.data.Barcode[0];
+        });
+	}	
+	
+	$scope.searchBarcode = function() {
+		$('#lista-codigos').empty();
+		for (i=0; i < $scope.barcodes.length; i++) {
+			if( $scope.barcodes[i].barcode.toUpperCase().indexOf($scope.searchCode.toUpperCase()) > -1 ) {	
+				$('#panel-info').addClass('hidden');
+			    $('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
+			}
+			
+			if($scope.searchCode.toUpperCase().length == 0) {
+				$('#panel-info').addClass('hidden');
+			}
+			
+		}
+		$('.list-group-item').on('click', function () {
+					$('.list-group-item').each(function (index) {
+						var cl = $(this).attr('class');
+						if (cl.search("active") != -1) {
+							$(this).attr('class', 'list-group-item')
+						}
+					})
+					$(this).button('toggle');
+					showDataScreen($(this).text());
+				});
+		
+	}
+	
+	// Apartado de Manipulación de Codigos
+	
+	$scope.addCode = function() {
+        $('#myModalAddCode').modal();
+	};
+	
+	$scope.saveCode = function() {
+		$http.post($rootScope.server + '/fastpic/barcode/insert', { barcode: $('#insertCode').val(), images: null })
+        .then(function (result) {
+        	$scope.loadCodes();
+        });
+        $('#myModalAddCode').modal('hide');
+        $('#insertCode').val('');
+	}
+	
+	$scope.cancelAddCode = function() {
+        $('#myModalAddCode').modal('hide');
+        $('#insertCode').val('');
+	}
+
+    $scope.enableCode = function() {
+    	$scope.currentBarcode.status = 'D';
+    	console.log($scope.currentBarcode);
+    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+    	.then(function(result) {
+    		$scope.loadCodes();
+    	});
+    }
+    
+    $scope.disableCode = function() {
+    	$scope.currentBarcode.status = 'E';
+    	console.log($scope.currentBarcode);
+    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+    	.then(function(result) {
+    		$scope.loadCodes();
+    	});
+    }
+    
+    // Apartado de Manipulación de Imagenes
+    
+    $scope.addImg = function() {
+    	$('#myModalLabel').empty();
+    	$('#myModalBody').empty();
+    	$('#myModalBody').append('<input id="MyImageOrder" type="text" /><input id="MyFileUpload" type="file" accept="image/jpeg" />');
+    	$('#myModal').modal();
+        $('#cancel-modal-button').on('click', function () {
+        $('#myModal').modal('hide');
+        });
+        
+    }
+    
+    $scope.saveImg = function() {
+    	var reader = new FileReader();
+        var f = document.getElementById("MyFileUpload").files;
+        var imageString;
+        reader.onload = function(readerEvt) {
+        	var binaryString = readerEvt.target.result;
+        	imageString = btoa(binaryString);
+        	$scope.currentBarcode.images.push({ imageData: imageString, imageOrder: parseInt($('#MyImageOrder').val()) });
+        	console.log($scope.currentBarcode);
+        	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+        	.then(function(result) {
+        		$scope.selectCode($scope.currentBarcode.barcode);
+        	});
+        }
+        reader.readAsBinaryString(f[0]);
+        $('#myModal').modal('hide');
+    }
+    
+	$scope.ChOrder = function() {
+		$scope.forChange = 1;
+    }
+    
+	$scope.CancelOrder = function() {
+		$scope.forChange = 0;
+    }
+	
+	$scope.OkOrder = function() {			
+		for (i=0; i<$scope.currentBarcode.images.length; i++) {
+			for(j=0; j<$scope.currentBarcode.images.length; j++) {
+				if ($('.imageId')[i].value== $scope.currentBarcode.images[j].imageId) {	
+					$scope.currentBarcode.images[j].imageOrder = $('.imageOrder')[i].value;
+				}
+			}
+		}		
+		console.log($scope.currentBarcode);
+		$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode);
+		$scope.forChange = 0;
+    }
+    
+    $scope.delImg = function() {
+    	var imagenes = $('div.panel-primary.imagen-clickable .imageId');
+    	for (i = 0; i < imagenes.length; i++) {
+    		for (e = 0; e < $scope.currentBarcode.images.length; e++) {
+    			var currentBarcodeCode = $scope.currentBarcode.images[e].imageId;
+    			var code = parseInt(imagenes[i].value);
+    			if (currentBarcodeCode == code) {
+    				$scope.currentBarcode.images.splice(e,1);
+    			}
+    		}
+    	}
+    	console.log($scope.currentBarcode);
+    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+    	.then(function(result) {
+    		$scope.selectCode($scope.currentBarcode.barcode);
+    	});
+    }
+    
+    $('#dwn-img').on('click', function () {
+        var imagenes = $('div.panel-primary.imagen-clickable img');
+        for (i = 0; i < imagenes.length; i++) {
+        	var url = imagenes[i].src.replace(/^data:image\/[^;]/, 'data:application/octet-stream,name=filename.jpg');
+        	window.open(url);
+        }
+    });
+
+    function showDataScreen(id) 
+	{
+        $('#image-container-1').empty();
+        $('#image-container-2').empty();
+        $('#image-container-3').empty();
+        $('#panel-info').removeClass('hidden');
+
+        $http.get($rootScope.server + '/fastpic/barcode/getByCode/' + id).then(function(response) {
+        	$scope.currentBarcode = response.data.Barcode[0];
+        });
+    }
+	
+	
+    function showDataScreen2(id) 
+		{
+		
+        $('#data-container').empty();
+        $('#panel-info').removeClass('hidden');
+		$('#botones').addClass('hidden');
+		$('#botones2').removeClass('hidden');
+		//console.log(id);
+        $http.get($rootScope.server + '/fastpic/barcode/getByCode' + '/' + id).then(function(response) {
+			
+        	$scope.currentBarcode = response.data.Barcode[0];
+        	$scope.columns.push = [];
+        	$scope.columns.push = [];
+        	$scope.columns.push = [];
+        	if (response.data.Barcode[0].images.length >= 1) {
+                $('#data-container').append('<div id="row"><div class="col-md-4" id="image-container-1"></div><div class="col-md-4" id="image-container-2"></div><div class="col-md-4" id="image-container-3"></div></div>');
+				//console.log("Aqui 2");
+                for (i = 0; i < response.data.Barcode[0].images.length; i++) {
+				//console.log("Aqui 3");
+                    $('#image-container-' + ((i % 3) + 1)).append('<div class="panel panel-default imagen-clickable"><div class="panel-heading"><input class="imageOrder" type="text" value="' + response.data.Barcode[0].images[i].imageOrder + '"/></div><div class="panel-body"><input type="hidden" id="createdBy" value="' + response.data.Barcode[0].images[i].createdBy + '"/><input type="hidden" id="creationDate" value="' + response.data.Barcode[0].images[i].creationDate + '"/><input type="hidden" class="imageId" value="' + response.data.Barcode[0].images[i].imageId + '"/><img src="data:image/jpeg;base64,' + response.data.Barcode[0].images[i].imageData + '" class="img-thumbnail img-responsive"/></div></div>');
+                }
+               
+            }
+            else if (response.data.Barcode[0].images.length == 0) {
+            	
+            }
+        });
+    }
+})
+.directive('myImageContainer', function() {
+	
+	function link(scope, element, attrs) {
+		scope.$watch('currentBarcode', function(newVal, oldVal) {
+			showImageScreen(newVal, oldVal, 0);
+		})
+		
+		scope.$watch('columnNum', function(newVal, oldVal) {
+			showImageScreen(scope.currentBarcode, oldVal, 0);
+		})
+		
+		scope.$watch('forChange', function(newVal, oldVal) {
+			showImageScreen(scope.currentBarcode, oldVal, newVal);
+		})
+		
+		function showImageScreen(newVal, oldVal, forChange) {
+		
+			if (forChange == 0) {
+				$('#botones').removeClass('hidden');
+				$('#botones2').addClass('hidden');
+			}
+			else if (forChange == 1) {
+				$('#botones').addClass('hidden');
+				$('#botones2').removeClass('hidden');
+			}
+				
+			if (newVal !== undefined) {
+				element.empty();
+				if(newVal.images.length === 0) {
+					element.append('<h1>This code has no images</h1>');
+				}
+				else {
+					
+					newVal.images = newVal.images.sort(function(a, b) {
+						return b.imageOrder < a.imageOrder ?  1 : b.imageOrder > a.imageOrder ? -1 : 0;                   
+					});
+					
+					var imageContainer = '<div id="row">';
+					
+					for (i = 0; i < attrs.columnNum; i++) {
+						imageContainer = imageContainer + '<div class="col-md-' + 12 / attrs.columnNum + '" id="image-container-' + (i+1) + '">'
+						
+						for (e = i; e < newVal.images.length; e = e + parseInt(attrs.columnNum)) {
+							if (forChange == 1) {
+								imageContainer = imageContainer + '<div class="panel panel-default imagen-clickable"><div class="panel-heading"><input class="imageOrder" type="text" value="' + newVal.images[e].imageOrder + '"/></div><div class="panel-body"><input type="hidden" id="createdBy" value="' + newVal.images[e].createdBy + '"/><input type="hidden" id="creationDate" value="' + newVal.images[e].creationDate + '"/><input type="hidden" class="imageId" value="' + newVal.images[e].imageId + '"/><img src="data:image/jpeg;base64,' + newVal.images[e].imageData + '" class="img-thumbnail img-responsive"/></div></div>';
+							}
+							else if (forChange == 0) {
+								imageContainer = imageContainer + '<div class="panel panel-default imagen-clickable"><div class="panel-heading">' + newVal.images[e].imageOrder + '</div><div class="panel-body" style="align: center;"><input type="hidden" id="createdBy" value="' + newVal.images[e].createdBy + '"/><input type="hidden" id="creationDate" value="' + newVal.images[e].creationDate + '"/><input type="hidden" class="imageId" value="' + newVal.images[e].imageId + '"/><img src="data:image/jpeg;base64,' + newVal.images[e].imageData + '" class="img-thumbnail img-responsive"/></div></div>';
+							}
+						}
+						
+						imageContainer = imageContainer + '</div>';
+					}
+					
+					imageContainer = imageContainer + '</div>';
+					
+					element.append(imageContainer);
+					
+					if (forChange == 0) {
+						$('.imagen-clickable').on('click', function () {
+		                    var cl = $(this).attr('class');
+		                    if (cl.search("primary") != -1) {
+		                        $(this).attr('class', 'panel panel-default imagen-clickable')
+		                    }
+		                    else {
+		                        $(this).attr('class', 'panel panel-primary imagen-clickable')
+		                    }
+		                });
+					}
+				}
+			} else {
+				element.empty();
+				element.append('<h1>Select a code</h1>')
+			}
+		}
+	}
+	
+	return {
+		link: link
+	}
+})
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
