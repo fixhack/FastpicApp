@@ -116,8 +116,17 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		UserService.logout(successAuth);
 	}
 })
-.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform) {
+.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform, $ionicLoading) {
+	  $scope.show = function() {
+		    $ionicLoading.show({
+		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+		    });
+		  };
 
+		  $scope.hide = function(){
+		        $ionicLoading.hide();
+		  };
+		  
 	
 	$scope.data = {};
 	
@@ -140,8 +149,11 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	function successAuth(res) {
         $localStorage.token = res.access_token;
 		$state.go('principal.barcodes');
+		$scope.hide($ionicLoading); 
     }
 	$scope.submit = function() {
+		$scope.show($ionicLoading);
+		
 		var formData = {
             username: $scope.data.username,
             password: $scope.data.password
@@ -169,14 +181,24 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 })
-.controller('UsersCtrl', function($scope, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout) 
+.controller('UsersCtrl', function($scope, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout,$ionicLoading) 
 {
 /*
  * $cargaPropiedades.getServer().success(function(response) { $rootScope.server =
  * response.server; })
  */
+	 $scope.show = function() {
+		    $ionicLoading.show({
+		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+		    });
+		  };
+
+		  $scope.hide = function(){
+		        $ionicLoading.hide();
+		  };
 		
 	$scope.loadUsers = function() {
+		$scope.show($ionicLoading);
 		$cargaPropiedades.getServer().success(function(response) {
 			$rootScope.server = response.server;
 			$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
@@ -187,6 +209,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				}
 			});
 		})
+		$scope.hide($ionicLoading);
 	}
 	
 	$scope.selectUser = function(user) {
@@ -353,8 +376,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	
 })
-.controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $cordovaCamera ,$timeout, $ionicTabsDelegate) 
+.controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $cordovaCamera ,$timeout, $ionicTabsDelegate, $ionicLoading) 
 {
+	 $scope.show = function() {
+		    $ionicLoading.show({
+		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+		    });
+		  };
+
+		  $scope.hide = function(){
+		        $ionicLoading.hide();
+		  };
+		  
 	var oldSoftBack = $rootScope.$ionicGoBack;
 	
 	$rootScope.$ionicGoBack = function() {
@@ -415,6 +448,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.columnNum = 3;
 	
 	$scope.loadCodes = function() {
+		$scope.show($ionicLoading);
 		$cargaPropiedades.getServer().success(function(response) {
 			$rootScope.server = response.server;
 			$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
@@ -425,6 +459,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				}
 			});
 		})
+		 $scope.hide($ionicLoading); 
 	}
 	
 	$scope.selectCode = function(codigo, openImages) {
