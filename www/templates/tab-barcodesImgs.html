@@ -8,22 +8,36 @@
   <br></br>
    <ion-content ng-controller="BarcodesCtrl">
   <div class="row">
-	 <div class="col col-50">
-	 	<button type='button' class='button button-balanced' id='add-code' on-touch="takePicture()">Upload Image</button>
+	 <div class="col col-100">
+	 	<button type='button' class='button button-block button-balanced' id='add-code' on-touch="takePicture()">Upload Image</button>
 	  </div> 
-	  <div class="col col-50">
+	  <!-- <div class="col col-50">
 	 	<button type='button' class='button button-balanced' id='add-code' ng-click="addCode()">Change Order</button>
-	 	 </div> 
+	 	 </div> --> 
 	 </div>
-	<div class="row">
+	<!-- <div class="row">
 	 <div class="col col-50" aling="right">
 	 	<button type='button' class='button button-assertive' id='add-code' ng-click="addCode()">Remove Image</button>
 	 </div> 
 	     <div class="col col-50">
 	 	<button type='button' class='button button-balanced' id='add-code' on-touch="test()">Test</button>
 	 	 </div>  
-  </div>
-  {{currentBarcode}} - Hi
+  </div> -->
+  <!-- <div class="list">
+  	<a ng-repeat="image in currentBarcode.images" class="item item-thumbnail-left">
+  		<img ng-src="data:image/jpeg;base64,{{image.imageData}}" />
+  		<h2>{{image.imageOrder}}</h2>
+  	</a>
+  </div> -->
+	<ion-list id="listaImagenes">
+		<ion-item ng-repeat="image in currentBarcode.images" class="item item-thumbnail-right">
+			<!--   -->
+			<img ng-src="data:image/jpeg;base64,{{image.imageData}}">
+			<h1>{{image.imageOrder}}</h1>
+			<ion-option-button  class="button button-positive">Reorder</ion-option-button>
+			<ion-option-button class='button button-assertive' on-touch="delImg(image.imageId)">Remove</ion-option-button>
+		</ion-item>
+	</ion-list>
   </ion-content> 
 </ion-view>
 
