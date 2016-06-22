@@ -117,6 +117,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 })
 .controller('ConfigCtrl', function($scope, $state) {
+	$scope.nombreServidor = $rootScope.server;
+	
+	$scope.saveInfo = function() {
+		$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": ' + $scope.nombreServidor + '}', true)
+	}
+	
 	$scope.goBackToLogin = function() {
 		$state.go('login');
 	}

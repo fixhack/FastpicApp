@@ -2,10 +2,10 @@
 	<ion-content>
 		<div class="list list-inset">
 				<label class="item item-input" /> 
-				<input type="text" placeholder="Server:" />
+				<input type="text" placeholder="Server:" ng-model="nombreServidor"/>
 		</div>
 					<div class="row">
-				<button class="button button-block button-positive">Save</button>
+				<button class="button button-block button-positive" on-touch="saveInfo()">Save</button>
 			</div>
 			<div class="row">
 				<button class="button button-block button-positive" on-touch="goBackToLogin()">Cancel</button>
