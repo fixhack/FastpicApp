@@ -135,6 +135,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		//$state.go('login');
 		//$ionicHistory.goBack();
 		ionic.Platform.exitApp();
+		
 		}; 
 		
 	// registerBackButtonAction() returns a function which can be used to deregister it
@@ -163,6 +164,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             var alertPopup = $ionicPopup.alert({
                 title: 'Login failed!'
             });
+            $scope.hide($ionicLoading); 
         })
 	};
 	
@@ -198,18 +200,20 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		  };
 		
 	$scope.loadUsers = function() {
-		$scope.show($ionicLoading);
+		
 		$cargaPropiedades.getServer().success(function(response) {
 			$rootScope.server = response.server;
 			$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
+				$scope.show($ionicLoading);
 				$scope.users = response.data.User;
 				$scope.visibleusers = response.data.User;
 				if ($scope.currentUser !== undefined) {
 					$scope.selectUser($scope.currentUser.username);
 				}
+				$scope.hide($ionicLoading);
 			});
 		})
-		$scope.hide($ionicLoading);
+		
 	}
 	
 	$scope.selectUser = function(user) {
@@ -448,18 +452,20 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.columnNum = 3;
 	
 	$scope.loadCodes = function() {
-		$scope.show($ionicLoading);
+		
 		$cargaPropiedades.getServer().success(function(response) {
 			$rootScope.server = response.server;
 			$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
+				$scope.show($ionicLoading);
 				$scope.barcodes = response.data.Barcode;
 				$scope.visibleBarcodes = response.data.Barcode;
 				if ($scope.currentBarcode !== undefined) {
 					$scope.selectCode($scope.currentBarcode.barcode);
 				}
+				$scope.hide($ionicLoading); 
 			});
 		})
-		 $scope.hide($ionicLoading); 
+		 
 	}
 	
 	$scope.selectCode = function(codigo, openImages) {
