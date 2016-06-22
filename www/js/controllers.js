@@ -379,11 +379,14 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		})
 	}
 	
-	$scope.selectCode = function(codigo) {
+	$scope.selectCode = function(codigo, openImages) {
 		//console.log($ionicTabsDelegate);
-		$state.go('barcodesImgs');
-        $http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
+		if (openImages !== undefined) {
+			$state.go('barcodesImgs');
+		}
+		$http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
         	$scope.currentBarcode = response.data.Barcode[0];
+        	$rootScope.currentBarcode = $scope.currentBarcode;
         });
 	}	
 	
@@ -460,6 +463,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         		$scope.loadCodes();
         	});
         });
+    }
+    
+    $scope.test = function() {
+    	console.log($scope.currentBarcode);
     }
     
     $scope.disableCode = function(codigo) {

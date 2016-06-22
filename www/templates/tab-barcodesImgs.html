@@ -6,6 +6,7 @@
         <button ng-click="back()" class="button button-icon icon ion-chevron-left">Back</button>
     </ion-nav-buttons>
   <br></br>
+  <ion-content>
   <div class="row">
 	 <div class="col col-50">
 	 	<button type='button' class='button button-balanced' id='add-code' ng-click="saveImg()">Upload Image</button>
@@ -17,7 +18,12 @@
 	<div class="row">
 	 <div class="col col-50" aling="right">
 	 	<button type='button' class='button button-assertive' id='add-code' ng-click="addCode()">Remove Image</button>
-	 </div>      
+	 </div> 
+	     <div class="col col-50">
+	 	<button type='button' class='button button-balanced' id='add-code' on-touch="test()">Test</button>
+	 	 </div>  
   </div>
+  {{currentBarcode}} - Hi
   </ion-content>
 </ion-view>
+

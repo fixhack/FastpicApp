@@ -9,7 +9,7 @@
     	    <i class="icon ion-search placeholder-icon"></i>
       		<input type="text" placeholder="Search">
    		 </label>
-   		 <button class="button button-small" ng-click="scan()" ng-model="searchCode" >
+   		 <button class="button button-small" on-touch="scan()" ng-model="searchCode" >
       		Scan
     	</button>
    </div>
@@ -29,7 +29,7 @@
     		   ng-if="codigo.status == null || codigo.status == 'E'" 
     		   ng-if="barcodes.length > 0" 
     		   ng-repeat="codigo in barcodes" >{{codigo.barcode}}
-		<ion-option-button  class="button button-positive" ng-click="selectCode(codigo.barcode)">Select</ion-option-button>
+		<ion-option-button  class="button button-positive" ng-click="selectCode(codigo.barcode, 1)">Select</ion-option-button>
 		<ion-option-button class='button button-assertive' ng-click="enableCode(codigo.barcode)">Disable</ion-option-button>
 		
 	</ion-item>
@@ -37,7 +37,7 @@
                ng-if="codigo.status == 'D'" 
                ng-if="barcodes.length > 0" 
                ng-repeat="codigo in barcodes" >{{codigo.barcode}} - Disabled
-        <ion-delete-button class="button button-assertive"  ng-click="selectCode(codigo.barcode)">Select</ion-delete-button>
+        <ion-delete-button class="button button-assertive"  ng-click="selectCode(codigo.barcode, 1)">Select</ion-delete-button>
         <ion-option-button  class='button button-balanced'  ng-click="disableCode(codigo.barcode)">Enable</ion-option-button>
     </ion-item>
     <ion-item ng-if="barcodes.length < 1">No existen codigos</ion-item>
