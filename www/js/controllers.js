@@ -104,7 +104,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             });
         }
 })
-.controller('PrincipalCtrl', function($scope, $localStorage, $state, UserService) {
+.controller('PrincipalCtrl', function($scope, $localStorage, $state, UserService, $rootScope) {
 	function successAuth(res) {
 		if (res !== undefined) {
 			$localStorage.token = res.access_token;
@@ -116,18 +116,44 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		UserService.logout(successAuth);
 	}
 })
-.controller('ConfigCtrl', function($scope, $state) {
-	$scope.nombreServidor = $rootScope.server;
+.controller('ConfigCtrl', function($scope, $state, $cordovaFile, $rootScope) {
+	/*
+	var doCustomBack= function() {
+	    // do something interesting here
+		//console.log($state.current.url);
+		if ($state.current.url == "/login"){
+			ionic.Platform.exitApp();
+		}
+		else{
+			$state.go('login');
+		}
+		//	$ionicHistory.goBack();
+		}; 
+		
+	// registerBackButtonAction() returns a function which can be used to deregister it
+	var deregisterHardBack= $ionicPlatform.registerBackButtonAction(
+		doCustomBack, 101
+	);
+
+	$scope.$on('$destroy', function() {
+		deregisterHardBack();
+	});
+	*/
+	$scope.data = [];
+	
+	$scope.data.nombreServidor = $rootScope.server;
 	
 	$scope.saveInfo = function() {
-		$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": ' + $scope.nombreServidor + '}', true)
+		//$cordovaFile.writeFile("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf", '{"server": ' + $scope.data.nombreServidor + '}', true).then(function(a) { console.log('readAsText Success'); })
+		$rootScope.server = $scope.data.nombreServidor;
+		$state.go('login');
 	}
 	
 	$scope.goBackToLogin = function() {
 		$state.go('login');
 	}
 })
-.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform, $ionicLoading) {
+.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cordovaFile, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform, $ionicLoading) {
 	  $scope.show = function() {
 		    $ionicLoading.show({
 		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
@@ -185,24 +211,33 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	var currentPlatform = ionic.Platform.platform();
 	
-	if (ionic.Platform.platform() === 'win32') {
-		$cargaPropiedades.getServer().success(function(response) {
-			$rootScope.server = response.server;
-		})
-	}
+	$cargaPropiedades.getServer().success(function(response) {
+		$rootScope.server = response.server;
+	})
 	
-	if (ionic.Platform.isAndroid()) {
-		$cordovaFile.checkFile(cordova.file.dataDirectory, "fastpic.conf")
-		.then(function(success) {
-			$cordovaFile.readAsText(cordova.file.dataDirectory, "fastpic.conf")
-			.then(function(result) {
-				console.log('readAsText Success');
-                items = JSON.parse(result);
-                $rootScope.server = items.server;
-			}, function(err) {})
-		}, function(error) {
-			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://finanzas.seseqro.gob.mx/fastpic-service"}', true)
-		})
+	$scope.initConfig = function() {
+		console.log('Entre');
+		/*
+		if (ionic.Platform.platform() === 'win32') {
+			$cargaPropiedades.getServer().success(function(response) {
+				$rootScope.server = response.server;
+			})
+		}
+		
+		if (ionic.Platform.isAndroid()) {
+			$cordovaFile.checkFile("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf")
+			.then(function(success) {
+				$cordovaFile.readAsText("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf")
+				.then(function(result) {
+					console.log('Encontre archivo y lo voy a leer ' + success);
+	                items = JSON.parse(result);
+	                console.log(items);
+	                $rootScope.server = items.server;
+				}, function(err) {})
+			}, function(error) {
+				$cordovaFile.writeFile("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf", '{"server": "http://finanzas.seseqro.gob.mx/fastpic-service"}', true).then(function() {console.log('no lo encontre hago uno ' + error);})
+			})
+		}*/
 	}
 	
 	$scope.makeWarning = function() {
@@ -436,7 +471,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			ionic.Platform.exitApp();
 		}
 		else{
-			$state.go('login');
+			$ionicHistory.goBack(); //$state.go('login');
 		}
 		//	$ionicHistory.goBack();
 		}; 
@@ -553,12 +588,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 						console.log(s);
 						if (barcodeData.cancelled == true)
 							{
+							$scope.saveCode(barcodeData.text);
 							 var alertPopup = $ionicPopup.alert({
 					                title: 'Scan failed!'
 					            });
 							}
 						//$scope.find(barcodeData.text);
-						$scope.saveCode(barcodeData.text);
 			      }, function(error) {
 			        alert("Scanning failed: " + error);
 			      });
@@ -622,13 +657,13 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
     
     $scope.takePicture = function() {
         var options = { 
-            quality : 100, 
+            quality : 75, 
             destinationType : Camera.DestinationType.DATA_URL, 
             sourceType : Camera.PictureSourceType.CAMERA, 
             allowEdit : false,
             encodingType: Camera.EncodingType.JPEG,
-            targetWidth: 300,
-            targetHeight: 300,
+            //targetWidth: 300,
+            //targetHeight: 300,
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: false
         };
