@@ -3,21 +3,21 @@
         <button ng-click="slider()" class="button button-icon icon ion-images">Slider</button>
     </ion-nav-buttons>
   <ion-content class="padding">
-  <div class="row">
+  <!-- <div class="row"> -->
    <div class="item item-input-inset">
     	<label class="item-input-wrapper">
     	    <i class="icon ion-search placeholder-icon"></i>
-      		<input type="text" placeholder="Search">
+      		<input type="text" placeholder="Search" ng-model="captureCode">
    		 </label>
-   		 <button class="button button-small" on-touch="scan()" ng-model="searchCode" >
+   		 <button class="button button-small" on-touch="ScanBarcodesearch()" ng-model="searchCode" >
       		Scan
     	</button>
    </div>
-  </div>
+ <!-- </div> -->
    
   <div class="row">
 	 <div class="col col-50">
-	 	<button type='button' class='button button-balanced' id='add-code' ng-click="addCode()">Add Code</button>
+	 	<button type='button' class='button button-balanced' id='add-code' on-touch="addCode()">Add Code</button>
 	 </div>      
   	<!-- <div class="col col-50" id="disenableCodes">
        <button type="button" class='button button-balanced' id="enable-code" ng-if="currentBarcode !== undefined && currentBarcode.status == 'D'" ng-click="disableCode()">Enable Code</button>

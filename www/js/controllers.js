@@ -343,8 +343,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		//console.log($scope.server);	
 		$state.go('principal');
 	}
-	
-	$scope.ScanBarcode = function() {
+		
+	$scope.ScanBarcodesearch = function() {
 		
 	      $cordovaBarcodeScanner.scan().then(function(barcodeData) 
 		  {
@@ -359,7 +359,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			            });
 					}
 				//$scope.find(barcodeData.text);
-				$scope.searchBarcode(barcodeData.text);
+				$scope.captureCode = barcodeData.text;
+				$scope.searchBarcode($scope.captureCode);
 	      }, function(error) {
 	        alert("Scanning failed: " + error);
 	      });
@@ -390,29 +391,16 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         });
 	}	
 	
-	$scope.searchBarcode = function() {
-		$('#lista-codigos').empty();
+	$scope.searchBarcode = function(id) {
+		console.log(id);
 		for (i=0; i < $scope.barcodes.length; i++) {
-			if( $scope.barcodes[i].barcode.toUpperCase().indexOf($scope.searchCode.toUpperCase()) > -1 ) {	
-				$('#panel-info').addClass('hidden');
-			    $('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
-			}
-			
-			if($scope.searchCode.toUpperCase().length == 0) {
-				$('#panel-info').addClass('hidden');
+			if( $scope.barcodes[i].barcode.indexOf(id) > -1 ) {	
+				console.log($scope.barcodes[i].barcode);
+				//$('#panel-info').addClass('hidden');
+			    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
 			}
 			
 		}
-		$('.list-group-item').on('click', function () {
-					$('.list-group-item').each(function (index) {
-						var cl = $(this).attr('class');
-						if (cl.search("active") != -1) {
-							$(this).attr('class', 'list-group-item')
-						}
-					})
-					$(this).button('toggle');
-					showDataScreen($(this).text());
-				});
 		
 	}
 	
@@ -494,43 +482,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         
     }
     
-    /*$scope.saveImg = function() {
-    	var options = {
-	      quality: 50,
-	      destinationType: Camera.DestinationType.DATA_URL,
-	      sourceType: Camera.PictureSourceType.CAMERA,
-	      allowEdit: false,
-	      encodingType: Camera.EncodingType.JPEG,
-	      targetWidth: 100,
-	      targetHeight: 100,
-	      popoverOptions: CameraPopoverOptions,
-	      saveToPhotoAlbum: true,
-		  correctOrientation:true
-	    };
-
-	    $cordovaCamera.getPicture(options).then(function(imgData) {
-	    	console.log("break1");
-	    	var imageString = "data:image/jpeg;base64," + imgData;
-	      $scope.currentBarcode.images.push({ imageData: imageString, imageOrder: 3 });
-	      console.log("break2");
-        	console.log($scope.currentBarcode);
-        	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
-        	.then(function(result) {
-        		$scope.selectCode($scope.currentBarcode.barcode);
-        		console.log("break3");
-        	});
-	    }, function(err) {
-	      console.log("cancelado");
-	    });
-    		
-    }*/
-    
     $scope.takePicture = function() {
         var options = { 
-            quality : 75, 
+            quality : 100, 
             destinationType : Camera.DestinationType.DATA_URL, 
             sourceType : Camera.PictureSourceType.CAMERA, 
-            allowEdit : true,
+            allowEdit : false,
             encodingType: Camera.EncodingType.JPEG,
             targetWidth: 300,
             targetHeight: 300,
