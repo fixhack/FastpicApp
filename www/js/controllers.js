@@ -246,6 +246,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		          } else {
 		            console.log($scope.data.name,$scope.data.user,$scope.data.pass);
 		            $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, ultimoAcceso: null, username: $scope.data.user})
+		            $scope.loadUsers();
 		          }
 		        }
 		      }
