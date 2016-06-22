@@ -6,10 +6,10 @@
         <button ng-click="back()" class="button button-icon icon ion-chevron-left">Back</button>
     </ion-nav-buttons>
   <br></br>
-  <ion-content>
+   <ion-content ng-controller="BarcodesCtrl">
   <div class="row">
 	 <div class="col col-50">
-	 	<button type='button' class='button button-balanced' id='add-code' ng-click="saveImg()">Upload Image</button>
+	 	<button type='button' class='button button-balanced' id='add-code' ng-click="takePicture()">Upload Image</button>
 	  </div> 
 	  <div class="col col-50">
 	 	<button type='button' class='button button-balanced' id='add-code' ng-click="addCode()">Change Order</button>
@@ -24,6 +24,6 @@
 	 	 </div>  
   </div>
   {{currentBarcode}} - Hi
-  </ion-content>
+  </ion-content> 
 </ion-view>
 

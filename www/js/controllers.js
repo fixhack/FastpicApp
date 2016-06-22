@@ -494,7 +494,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         
     }
     
-    $scope.saveImg = function() {
+    /*$scope.saveImg = function() {
     	var options = {
 	      quality: 50,
 	      destinationType: Camera.DestinationType.DATA_URL,
@@ -522,7 +522,36 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	    }, function(err) {
 	      console.log("cancelado");
 	    });
-        	
+    		
+    }*/
+    
+    $scope.takePicture = function() {
+        var options = { 
+            quality : 75, 
+            destinationType : Camera.DestinationType.DATA_URL, 
+            sourceType : Camera.PictureSourceType.CAMERA, 
+            allowEdit : true,
+            encodingType: Camera.EncodingType.JPEG,
+            targetWidth: 300,
+            targetHeight: 300,
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: false
+        };
+ 
+        $cordovaCamera.getPicture(options).then(function(imgData) {
+        	//console.log("break1");
+            $scope.imgURI = imgData;
+            $scope.currentBarcode.images.push({ imageData: $scope.imgURI, imageOrder: 3 });
+            //console.log("break2");
+            //console.log($scope.currentBarcode);
+            $http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+            .then(function(result) {
+        		$scope.selectCode($scope.currentBarcode.barcode);
+        		//console.log("break3");
+        	});
+	    	}, function(err) {
+	    		console.log("cancelado");
+	    	});
     }
     
 	$scope.ChOrder = function() {
