@@ -360,7 +360,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 					}
 				//$scope.find(barcodeData.text);
 				$scope.captureCode = barcodeData.text;
-				$scope.searchBarcode($scope.captureCode);
+				$scope.searchBarcode();
 	      }, function(error) {
 	        alert("Scanning failed: " + error);
 	      });
@@ -392,19 +392,35 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         });
 	}	
 	
+	$scope.searchEntrada = function(id) {
+			$scope.searchBarcode($scope.captureCode);
+	}
 	$scope.searchBarcode = function(id) {
-		console.log(id);
-		$scope.visibleBarcodes = [];
-		for (i=0; i < $scope.barcodes.length; i++) {
-			if( $scope.barcodes[i].barcode.indexOf(id) > -1 ) {	
-				console.log($scope.barcodes[i].barcode);
-				$scope.visibleBarcodes.push($scope.barcodes[i]);
-				//$('#panel-info').addClass('hidden');
-			    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
+		if (id !== undefined) {
+			console.log(id);
+			$scope.visibleBarcodes = [];
+			for (i=0; i < $scope.barcodes.length; i++) {
+				if( $scope.barcodes[i].barcode.indexOf(id) > -1 ) {	
+					console.log($scope.barcodes[i].barcode);
+					$scope.visibleBarcodes.push($scope.barcodes[i]);
+					//$('#panel-info').addClass('hidden');
+				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
+				}
+				
 			}
-			
+		} else {
+			console.log($scope.captureCode);
+			$scope.visibleBarcodes = [];
+			for (i=0; i < $scope.barcodes.length; i++) {
+				if( $scope.barcodes[i].barcode.indexOf($scope.captureCode) > -1 ) {	
+					console.log($scope.barcodes[i].barcode);
+					$scope.visibleBarcodes.push($scope.barcodes[i]);
+					//$('#panel-info').addClass('hidden');
+				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
+				}
+				
+			}
 		}
-		
 	}
 	
 	// Apartado de Manipulación de Codigos

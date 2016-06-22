@@ -2,14 +2,17 @@
 	<ion-nav-buttons side="right">
         <button ng-click="slider()" class="button button-icon icon ion-images">Slider</button>
     </ion-nav-buttons>
+    <ion-spinner></ion-spinner>
   <ion-content class="padding">
   <!-- <div class="row"> -->
+  
+  
    <div class="item item-input-inset">
     	<label class="item-input-wrapper">
     	    <i class="icon ion-search placeholder-icon"></i>
-      		<input type="text" placeholder="Search" ng-model="captureCode">
+      		<input type="text" placeholder="Search" ng-change="searchBarcode(captureCode)" ng-model="captureCode">
    		 </label>
-   		 <button class="button button-small" on-touch="ScanBarcodesearch()" ng-model="searchCode" >
+   		 <button class="button button-small" on-touch="ScanBarcodesearch()" >
       		Scan
     	</button>
    </div>
