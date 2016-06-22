@@ -575,31 +575,20 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$scope.forChange = 0;
     }
     
-    $scope.delImg = function() {
-    	var imagenes = $('div.panel-primary.imagen-clickable .imageId');
-    	for (i = 0; i < imagenes.length; i++) {
-    		for (e = 0; e < $scope.currentBarcode.images.length; e++) {
-    			var currentBarcodeCode = $scope.currentBarcode.images[e].imageId;
-    			var code = parseInt(imagenes[i].value);
-    			if (currentBarcodeCode == code) {
-    				$scope.currentBarcode.images.splice(e,1);
-    			}
-    		}
-    	}
+    $scope.delImg = function(id) {
+		for (e = 0; e < $scope.currentBarcode.images.length; e++) {
+			var currentBarcodeCode = $scope.currentBarcode.images[e].imageId;
+			var code = parseInt(id);
+			if (currentBarcodeCode == code) {
+				$scope.currentBarcode.images.splice(e,1);
+			}
+		}
     	console.log($scope.currentBarcode);
     	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
     	.then(function(result) {
     		$scope.selectCode($scope.currentBarcode.barcode);
     	});
     }
-    
-    $('#dwn-img').on('click', function () {
-        var imagenes = $('div.panel-primary.imagen-clickable img');
-        for (i = 0; i < imagenes.length; i++) {
-        	var url = imagenes[i].src.replace(/^data:image\/[^;]/, 'data:application/octet-stream,name=filename.jpg');
-        	window.open(url);
-        }
-    });
 
     function showDataScreen(id) 
 	{
