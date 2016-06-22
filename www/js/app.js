@@ -107,6 +107,15 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 			requireAuth: true
 	}
       })
+      
+      .state('configuration', {
+    	  url: '/configuration',
+    	  templateUrl: 'templates/config.html',
+    	  controller: "ConfigCtrl",
+    	  data: {
+    		  requireAuth: false
+    	  }
+      })
   
 
   .state('tab.chats', {

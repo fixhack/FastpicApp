@@ -34,7 +34,7 @@
 			<!--   -->
 			<img ng-src="data:image/jpeg;base64,{{image.imageData}}">
 			<h1>{{image.imageOrder}}</h1>
-			<ion-option-button  class="button button-positive">Reorder</ion-option-button>
+			<!-- <ion-option-button  class="button button-positive" on-touch="showModal()">Reorder</ion-option-button> -->
 			<ion-option-button class='button button-assertive' on-touch="delImg(image.imageId)">Remove</ion-option-button>
 		</ion-item>
 	</ion-list>

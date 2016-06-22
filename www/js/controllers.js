@@ -116,6 +116,11 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		UserService.logout(successAuth);
 	}
 })
+.controller('ConfigCtrl', function($scope, $state) {
+	$scope.goBackToLogin = function() {
+		$state.go('login');
+	}
+})
 .controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform, $ionicLoading) {
 	  $scope.show = function() {
 		    $ionicLoading.show({
@@ -127,6 +132,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		        $ionicLoading.hide();
 		  };
 		  
+	
+	$scope.config = function() {
+		$state.go('configuration');
+	}
 	
 	$scope.data = {};
 	
@@ -168,10 +177,27 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         })
 	};
 	
+	var currentPlatform = ionic.Platform.platform();
 	
-	$cargaPropiedades.getServer().success(function(response) {
-		$rootScope.server = response.server;
-	})
+	if (ionic.Platform.platform() === 'win32') {
+		$cargaPropiedades.getServer().success(function(response) {
+			$rootScope.server = response.server;
+		})
+	}
+	
+	if (ionic.Platform.isAndroid()) {
+		$cordovaFile.checkFile(cordova.file.dataDirectory, "fastpic.conf")
+		.then(function(success) {
+			$cordovaFile.readAsText(cordova.file.dataDirectory, "fastpic.conf")
+			.then(function(result) {
+				console.log('readAsText Success');
+                items = JSON.parse(result);
+                $rootScope.server = items.server;
+			}, function(err) {})
+		}, function(error) {
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://finanzas.seseqro.gob.mx/fastpic-service"}', true)
+		})
+	}
 	
 	$scope.makeWarning = function() {
 		$('#avisoError').addClass('ui red message');
@@ -604,7 +630,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         $cordovaCamera.getPicture(options).then(function(imgData) {
         	//console.log("break1");
             $scope.imgURI = imgData;
-            $scope.currentBarcode.images.push({ imageData: $scope.imgURI, imageOrder: 3 });
+            $scope.currentBarcode.images.push({ imageData: $scope.imgURI, imageOrder: ($scope.currentBarcode.images.length + 1)});
             //console.log("break2");
             //console.log($scope.currentBarcode);
             $http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
