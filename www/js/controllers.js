@@ -169,7 +169,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 })
-.controller('UsersCtrl', function($scope, $rootScope, UserService, $http, $cargaPropiedades) 
+.controller('UsersCtrl', function($scope, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout) 
 {
 /*
  * $cargaPropiedades.getServer().success(function(response) { $rootScope.server =
@@ -181,6 +181,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			$rootScope.server = response.server;
 			$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
 				$scope.users = response.data.User;
+				$scope.visibleusers = response.data.User;
 				if ($scope.currentUser !== undefined) {
 					$scope.selectUser($scope.currentUser.username);
 				}
@@ -222,28 +223,38 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	 * showDataScreen($(this).text()); }); } else {
 	 *  } });
 	 */
-	
-	
-	
-	$scope.addUser = function() 
-	{
-		$('#myModalLabel').empty();
-    	$('#myModalLabel').append("Add User")
-    	$('#myModalBody').empty();
-		$('.modal-body').append("<div class='input-group'><span class='input-group-addon' id='basic-addon-user'>Name</span><input type='text' class='form-control' aria-describedby='basic-addon-user' id='insert-name'/></div>")
-        $('.modal-body').append("<div class='input-group'><span class='input-group-addon' id='basic-addon-user'>User</span><input type='text' class='form-control' aria-describedby='basic-addon-user' id='insert-user'/></div>")
-		$('.modal-body').append("<div class='input-group'><span class='input-group-addon' id='basic-addon-pas'>Password</span><input type='password' class='form-control' aria-describedby='basic-addon-user' id='insert-pass'/></div>")
-        $('#myModal').modal();
-        $('#cancel-modal-button').on('click', function () {
-            $('#myModal').modal('hide');
-        });
-        $('#save-modal-button').on('click', function () {
-			
-           $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $('#insert-name').val(), password: $('#insert-pass').val(), ultimoAcceso: null, username: $('#insert-user').val()})
+	$scope.adduser = function() {
+		  $scope.data = {};
 
-            $('#myModal').modal('hide');
-        });
+		  //var temp='<div class="list"><label class="item item-input item-stacked-label"><span class="input-label">First Name</span><input type="text" placeholder="John"></label><label class="item item-input item-stacked-label"><span class="input-label">Last Name</span><input type="text" placeholder="Suhr"></label><label class="item item-input item-stacked-label"><span class="input-label">Email</span><input type="text" placeholder="john@suhr.com"></label></div>'
+		  
+		  
+		  // An elaborate, custom popup
+		  var myPopup = $ionicPopup.show({
+		    template: '<div class="list"><label class="item item-input item-stacked-label"><span class="input-label">Name</span><input type="text" ng-model="data.name"></label><label class="item item-input item-stacked-label"><span class="input-label">User</span><input type="text" ng-model="data.user"></label><label class="item item-input item-stacked-label"><span class="input-label">Password</span><input type="Password" ng-model="data.pass"></label></div>',
+		    title: 'Add User',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Cancel' },
+		      {
+		        text: '<b>Save</b>',
+		        type: 'button-positive',
+		        onTap: function(e) {
+		          if (!$scope.data.name ||!$scope.data.user||!$scope.data.pass) {
+		            //don't allow the user to close unless he enters wifi password
+		            e.preventDefault();
+		          } else {
+		            console.log($scope.data.name,$scope.data.user,$scope.data.pass);
+		            $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, ultimoAcceso: null, username: $scope.data.user})
+		          }
+		        }
+		      }
+		    ]
+		  });
+
 	};
+
+	
 	
 	$scope.updateUser = function() 
 	{
@@ -255,43 +266,76 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$('#myModalChangePassword').modal('hide');
 	}
 	
-	$scope.changePassword = function() {
-		$http.post($rootScope.server + '/fastpic/barcode/user/update', { nombre: $scope.currentUser.nombre, password: $('#insert-pass').val(), ultimoAcceso: null, username: $scope.currentUser.username})
-    	console.log($scope.currentUser);
-		$('#insert-pass').val('');
-        $('#myModalChangePassword').modal('hide');
+	$scope.changePassword = function(user,nombre) {
+		 $scope.data = {};
+
+		  //var temp='<div class="list"><label class="item item-input item-stacked-label"><span class="input-label">First Name</span><input type="text" placeholder="John"></label><label class="item item-input item-stacked-label"><span class="input-label">Last Name</span><input type="text" placeholder="Suhr"></label><label class="item item-input item-stacked-label"><span class="input-label">Email</span><input type="text" placeholder="john@suhr.com"></label></div>'
+		  
+		  
+		  // An elaborate, custom popup
+		  var myPopup = $ionicPopup.show({
+		    template: '<input type="password" ng-model="data.pass">',
+		    title: 'Change Password',
+		    subTitle: 'Please write you new password',
+		    scope: $scope,
+		    buttons: [
+		      { text: 'Cancel'},
+		      {
+		        text: '<b>Save</b>',
+		        type: 'button-positive',
+		        onTap: function(e) {
+		          if (!$scope.data.pass) {
+		            //don't allow the user to close unless he enters wifi password
+		            e.preventDefault();
+		          } else {
+		            console.log($scope.data.pass,user,nombre);
+		            $http.post($rootScope.server + '/fastpic/barcode/user/update', { nombre: nombre, password:$scope.data.pass , ultimoAcceso: null, username: user})
+		          }
+		        }
+		      }
+		    ]
+		  });
+		  
+		//$http.post($rootScope.server + '/fastpic/barcode/user/update', { nombre: $scope.currentUser.nombre, password: $('#insert-pass').val(), ultimoAcceso: null, username: $scope.currentUser.username})
+    	//console.log($scope.currentUser);
+		//$('#insert-pass').val('');
+        //$('#myModalChangePassword').modal('hide');
 	}
 	
-	$scope.delUser = function() {
-		$http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: $scope.currentUser.username })
+	$scope.delUser = function(id) {
+		console.log(id);
+		$http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: id })
     	.then(function(result){
     		$scope.loadUsers();
     	})
 	}
 	
-	$scope.searchUser = function() {
-		$('#lista-usuarios').empty();
-		// console.log($scope.users.User.length);
-		for (i=0; i < $scope.users.User.length; i++)
-		{
-			if( $scope.users.User[i].username.toUpperCase().indexOf($scope.searchUsr.toUpperCase()) > -1 )
-			{			        
-				// $('#panel-info').addClass('hidden');
-				$('#lista-usuarios').append("<button type='button' class='list-group-item' id-value='" + $scope.users.User[i].username + "' id='button" + $scope.users.User[i].username + "'>" + $scope.users.User[i].username + "</button>");			
-			}			
-			if($scope.searchUsr.toUpperCase().length == 0){
-				// $('#panel-info').addClass('hidden');
-			}			
+	$scope.searchUser = function(id) {
+		if (id !== undefined) {
+			console.log(id);
+			$scope.visibleusers = [];
+			for (i=0; i < $scope.users.User.length; i++) {
+				if( $scope.users.User[i].username.indexOf(id) > -1 ) {	
+					console.log($scope.users.User[i].username);
+					$scope.visibleusers.push($scope.users.User[i].username);
+					//$('#panel-info').addClass('hidden');
+				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
+				}
+				
+			}
+		} else {
+			console.log($scope.captureUser);
+			$scope.visibleusers = [];
+			for (i=0; i < $scope.users.User.length; i++) {
+				if( $scope.users.User[i].username.indexOf($scope.captureUser) > -1 ) {	
+					console.log($scope.users.User[i].username);
+					$scope.visibleusers.push($scope.users.User[i]);
+					//$('#panel-info').addClass('hidden');
+				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
+				}
+				
+			}
 		}
-		$('.list-group-item').on('click', function () {
-					$('.list-group-item').each(function (index) {
-						var cl = $(this).attr('class');
-						if (cl.search("active") != -1) {
-							$(this).attr('class', 'list-group-item')
-						}
-					})
-					$(this).button('toggle');
-				});
 		
 	}
 	
