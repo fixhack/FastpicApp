@@ -28,7 +28,7 @@
     <ion-item listCanSwipe = "true"  id='button-{{codigo.barcode}}' 
     		   ng-if="codigo.status == null || codigo.status == 'E'" 
     		   ng-if="barcodes.length > 0" 
-    		   ng-repeat="codigo in barcodes" >{{codigo.barcode}}
+    		   ng-repeat="codigo in visibleBarcodes" >{{codigo.barcode}}
 		<ion-option-button  class="button button-positive" ng-click="selectCode(codigo.barcode, 1)">Select</ion-option-button>
 		<ion-option-button class='button button-assertive' ng-click="enableCode(codigo.barcode)">Disable</ion-option-button>
 		
@@ -36,7 +36,7 @@
     <ion-item  id='button-{{codigo.barcode}}' 
                ng-if="codigo.status == 'D'" 
                ng-if="barcodes.length > 0" 
-               ng-repeat="codigo in barcodes" >{{codigo.barcode}} - Disabled
+               ng-repeat="codigo in visibleBarcodes" >{{codigo.barcode}} - Disabled
         <ion-delete-button class="button button-assertive"  ng-click="selectCode(codigo.barcode, 1)">Select</ion-delete-button>
         <ion-option-button  class='button button-balanced'  ng-click="disableCode(codigo.barcode)">Enable</ion-option-button>
     </ion-item>

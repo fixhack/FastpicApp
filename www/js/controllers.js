@@ -373,6 +373,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			$rootScope.server = response.server;
 			$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
 				$scope.barcodes = response.data.Barcode;
+				$scope.visibleBarcodes = response.data.Barcode;
 				if ($scope.currentBarcode !== undefined) {
 					$scope.selectCode($scope.currentBarcode.barcode);
 				}
@@ -393,9 +394,11 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.searchBarcode = function(id) {
 		console.log(id);
+		$scope.visibleBarcodes = [];
 		for (i=0; i < $scope.barcodes.length; i++) {
 			if( $scope.barcodes[i].barcode.indexOf(id) > -1 ) {	
 				console.log($scope.barcodes[i].barcode);
+				$scope.visibleBarcodes.push($scope.barcodes[i]);
 				//$('#panel-info').addClass('hidden');
 			    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
 			}
