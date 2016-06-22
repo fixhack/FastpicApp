@@ -312,12 +312,13 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.searchUser = function(id) {
 		if (id !== undefined) {
-			console.log(id);
+			//console.log(id);
+			//console.log($scope.users);
 			$scope.visibleusers = [];
-			for (i=0; i < $scope.users.User.length; i++) {
-				if( $scope.users.User[i].username.indexOf(id) > -1 ) {	
-					console.log($scope.users.User[i].username);
-					$scope.visibleusers.push($scope.users.User[i].username);
+			for (i=0; i < $scope.users.length; i++) {
+				if( $scope.users[i].username.indexOf(id) > -1 ) {	
+					console.log($scope.users[i].username);
+					$scope.visibleusers.push($scope.users[i]);
 					//$('#panel-info').addClass('hidden');
 				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
 				}
@@ -326,10 +327,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		} else {
 			console.log($scope.captureUser);
 			$scope.visibleusers = [];
-			for (i=0; i < $scope.users.User.length; i++) {
-				if( $scope.users.User[i].username.indexOf($scope.captureUser) > -1 ) {	
-					console.log($scope.users.User[i].username);
-					$scope.visibleusers.push($scope.users.User[i]);
+			for (i=0; i < $scope.users.length; i++) {
+				if( $scope.users[i].username.indexOf($scope.captureUser) > -1 ) {	
+					console.log($scope.users[i].username);
+					$scope.visibleusers.push($scope.users[i]);
 					//$('#panel-info').addClass('hidden');
 				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
 				}
