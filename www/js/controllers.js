@@ -590,11 +590,13 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 						console.log(s);
 						if (barcodeData.cancelled == true)
 							{
-							$scope.saveCode(barcodeData.text);
 							 var alertPopup = $ionicPopup.alert({
 					                title: 'Scan failed!'
 					            });
 							}
+						else {
+							$scope.saveCode(barcodeData.text);
+						}
 						//$scope.find(barcodeData.text);
 			      }, function(error) {
 			        alert("Scanning failed: " + error);
