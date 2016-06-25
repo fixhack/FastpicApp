@@ -508,8 +508,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			                title: 'Scan failed!'
 			            });
 					}
+				else {
+					$scope.captureCode = barcodeData.text;
+				}
 				//$scope.find(barcodeData.text);
-				$scope.captureCode = barcodeData.text;
 				$scope.searchBarcode();
 	      }, function(error) {
 	        alert("Scanning failed: " + error);
