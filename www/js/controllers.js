@@ -401,6 +401,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		console.log(id);
 		$http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: id })
     	.then(function(result){
+              var alertPopup = $ionicPopup.alert({title: 'User removed!'});
     		$scope.loadUsers();
     	})
 	}
@@ -514,7 +515,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				//$scope.find(barcodeData.text);
 				$scope.searchBarcode();
 	      }, function(error) {
-	        alert("Scanning failed: " + error);
+	        alert("Scanning canceled: " + error);
 	      });
 		}
 	
@@ -602,6 +603,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.saveCode = function(id) {
 		$http.post($rootScope.server + '/fastpic/barcode/insert', { barcode: id, images: null })
         .then(function (result) {
+            var alertPopup = $ionicPopup.alert({title: 'Code added!'});
         	$scope.loadCodes();
         });
       //  $('#myModalAddCode').modal('hide');
@@ -620,6 +622,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         	console.log($scope.currentBarcode);
         	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
         	.then(function(result) {
+                  var alertPopup = $ionicPopup.alert({title: 'Code enabled!'});
         		$scope.loadCodes();
         	});
         });
@@ -636,6 +639,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	    	console.log($scope.currentBarcode);
 	    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
 	    	.then(function(result) {
+                  var alertPopup = $ionicPopup.alert({title: 'Code disabled!'});
 	    		$scope.loadCodes();
 	    	});
         });
@@ -661,8 +665,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             sourceType : Camera.PictureSourceType.CAMERA, 
             allowEdit : false,
             encodingType: Camera.EncodingType.JPEG,
-            //targetWidth: 300,
-            //targetHeight: 300,
+            targetWidth: 128,
+            targetHeight: 960,
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: false
         };
@@ -675,6 +679,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             //console.log($scope.currentBarcode);
             $http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
             .then(function(result) {
+                  var alertPopup = $ionicPopup.alert({title: 'Image uploaded!'});
         		$scope.selectCode($scope.currentBarcode.barcode);
         		//console.log("break3");
         	});
@@ -715,6 +720,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
     	console.log($scope.currentBarcode);
     	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
     	.then(function(result) {
+              var alertPopup = $ionicPopup.alert({title: 'Image removed!'});
     		$scope.selectCode($scope.currentBarcode.barcode);
     	});
     }
