@@ -522,13 +522,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.loadCodes = function() {
 		$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
-			$scope.show($ionicLoading);
+			//$scope.show();
 			$scope.barcodes = response.data.Barcode;
 			$scope.visibleBarcodes = response.data.Barcode;
 			if ($scope.currentBarcode !== undefined) {
 				$scope.selectCode($scope.currentBarcode.barcode);
 			}
-			$scope.hide($ionicLoading); 
 		});
 	}
 	
@@ -661,8 +660,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             sourceType : Camera.PictureSourceType.CAMERA, 
             allowEdit : false,
             encodingType: Camera.EncodingType.JPEG,
-            //targetWidth: 300,
-            //targetHeight: 300,
+            targetWidth: 1280,
+            targetHeight: 960,
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: false
         };
@@ -870,4 +869,28 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
   $scope.settings = {
     enableFriends: true
   };
-});
+})
+.directive('usSpinner',   ['$http', '$rootScope', '$ionicLoading', function ($http, $rootScope, $ionicLoading){
+    return {
+        link: function (scope, elm, attrs)
+        {
+            if(attrs.$attr.usSpinnerStandalone) return;
+            $rootScope.spinnerActive = false;
+            scope.isLoading = function () {
+                return $http.pendingRequests.length > 0;
+            };
+
+            scope.$watch(scope.isLoading, function (loading)
+            {
+                $rootScope.spinnerActive = loading;
+                if(loading){
+                	$ionicLoading.show({
+          		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+          		    });
+                }else{
+         		    $ionicLoading.hide();
+                }
+            });
+        }
+    };
+}]);
