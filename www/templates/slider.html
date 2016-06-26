@@ -1,8 +1,10 @@
 <ion-view view-title="Slider" >
-	<ion-nav-buttons side="right">
-        <button on-touch="ScanBarcode()" class="button button-icon icon ion-ios-barcode">Scan</button>
-		<!--<button ng-click="slider()" class="button"><span class="fa fa-barcode"></span>Scan</button> -->
-    </ion-nav-buttons>
+	<ion-nav-buttons side="right" >
+        <button  on-touch="ScanBarcode()" class="button button-icon icon ion-ios-barcode">Scan</button>
+    </ion-nav-buttons> 
+	<ion-nav-buttons side="left" >
+        <button  on-touch="$ionicGoBack()" class="button button-icon icon ion-chevron-left">Back</button>
+    </ion-nav-buttons> 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>

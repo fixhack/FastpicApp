@@ -114,6 +114,13 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.logout = function() {
 		UserService.logout(successAuth);
+		$state.go('login');
+	}
+	
+
+	$scope.slider = function() {
+		//console.log($scope.server);	
+		$state.go('slider');
 	}
 })
 .controller('ConfigCtrl', function($scope, $state, $cordovaFile, $rootScope) {
@@ -144,10 +151,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.data.nombreServidor = $rootScope.server;
 	
 	$scope.saveInfo = function() {
-		$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "' + $scope.data.nombreServidor + '"}', true)
-		.then(function(a) { 
-			console.log('readAsText Success'); 
-		});
+		if (ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "' + $scope.data.nombreServidor + '"}', true)
+			.then(function(a) { 
+				console.log('readAsText Success'); 
+			});
+		}
 		$rootScope.server = $scope.data.nombreServidor;
 		$state.go('login');
 	}
@@ -232,7 +241,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 })
-.controller('UsersCtrl', function($scope, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout,$ionicLoading) 
+.controller('UsersCtrl', function($scope, $state, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout, $ionicLoading) 
 {
 /*
  * $cargaPropiedades.getServer().success(function(response) { $rootScope.server =
@@ -411,6 +420,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         
     }
 	
+	$scope.slider = function() {
+		//console.log($scope.server);	
+		$state.go('slider');
+	}
 	
 })
 .controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $cordovaCamera ,$timeout, $ionicTabsDelegate, $ionicLoading) 

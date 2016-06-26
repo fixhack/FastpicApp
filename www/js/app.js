@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controllers', 'starter.services', 'ngStorage'])
 
-.run(function($ionicPlatform,$rootScope,$cordovaFile) {
+.run(function($ionicPlatform,$rootScope,$cordovaFile, $cargaPropiedades) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -62,7 +62,7 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 
 	$ionicConfigProvider.tabs.position('bottom');
    $urlRouterProvider.when('', '/');
-   
+   $ionicConfigProvider.backButton.text('').icon('ion-ios7-arrow-left');
    	$ocLazyLoadProvider.config({
 		debug:false,
 		events:true,
