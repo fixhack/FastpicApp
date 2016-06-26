@@ -7,10 +7,45 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controllers', 'starter.services', 'ngStorage'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform,$rootScope,$cordovaFile) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
+	
+	if (ionic.Platform.platform() === 'win32') {
+		$cargaPropiedades.getServer().success(function(response) {
+			$rootScope.server = response.server;
+		})
+	}
+	if (ionic.Platform.isAndroid()) {
+		$cordovaFile.checkFile(cordova.file.dataDirectory, "fastpic.conf").then(function(success) {
+			$cordovaFile.readAsText(cordova.file.dataDirectory, "fastpic.conf").then(function(result) {
+			items = JSON.parse(result);
+			console.log('File found loading config' + items.server);
+			$rootScope.server = items.server;
+			}, function(err) {})
+		}, function(error) {
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://quer-app1:83/fastpic-service"}', true)
+			.then(function() {
+				$rootScope.server = "http://quer-app1:83/fastpic-service";
+			});
+		})
+	}
+	if (ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
+		$cordovaFile.checkFile(cordova.file.dataDirectory, "fastpic.conf").then(function(success) {
+			$cordovaFile.readAsText(cordova.file.dataDirectory, "fastpic.conf").then(function(result) {
+			items = JSON.parse(result);
+			console.log('File found loading config' + items.server);
+			$rootScope.server = items.server;
+			}, function(err) {})
+		}, function(error) {
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://quer-app1:83/fastpic-service"}', true)
+			.then(function() {
+				$rootScope.server = "http://quer-app1:83/fastpic-service";
+			});
+		})
+	}
+	  
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);

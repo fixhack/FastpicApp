@@ -144,7 +144,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.data.nombreServidor = $rootScope.server;
 	
 	$scope.saveInfo = function() {
-		//$cordovaFile.writeFile("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf", '{"server": ' + $scope.data.nombreServidor + '}', true).then(function(a) { console.log('readAsText Success'); })
+		$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "' + $scope.data.nombreServidor + '"}', true)
+		.then(function(a) { 
+			console.log('readAsText Success'); 
+		});
 		$rootScope.server = $scope.data.nombreServidor;
 		$state.go('login');
 	}
@@ -211,33 +214,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	var currentPlatform = ionic.Platform.platform();
 	
-	$cargaPropiedades.getServer().success(function(response) {
+	/*$cargaPropiedades.getServer().success(function(response) {
 		$rootScope.server = response.server;
-	})
+	})*/
 	
 	$scope.initConfig = function() {
-		console.log('Entre');
-		/*
-		if (ionic.Platform.platform() === 'win32') {
-			$cargaPropiedades.getServer().success(function(response) {
-				$rootScope.server = response.server;
-			})
-		}
-		
-		if (ionic.Platform.isAndroid()) {
-			$cordovaFile.checkFile("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf")
-			.then(function(success) {
-				$cordovaFile.readAsText("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf")
-				.then(function(result) {
-					console.log('Encontre archivo y lo voy a leer ' + success);
-	                items = JSON.parse(result);
-	                console.log(items);
-	                $rootScope.server = items.server;
-				}, function(err) {})
-			}, function(error) {
-				$cordovaFile.writeFile("file:///data/data/com.ionicframework.fastpicapp621531/files/", "fastpic.conf", '{"server": "http://finanzas.seseqro.gob.mx/fastpic-service"}', true).then(function() {console.log('no lo encontre hago uno ' + error);})
-			})
-		}*/
+
 	}
 	
 	$scope.makeWarning = function() {
@@ -256,31 +238,14 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
  * $cargaPropiedades.getServer().success(function(response) { $rootScope.server =
  * response.server; })
  */
-	 $scope.show = function() {
-		    $ionicLoading.show({
-		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
-		    });
-		  };
-
-		  $scope.hide = function(){
-		        $ionicLoading.hide();
-		  };
-		
 	$scope.loadUsers = function() {
-		
-		$cargaPropiedades.getServer().success(function(response) {
-			$rootScope.server = response.server;
-			$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
-				$scope.show($ionicLoading);
-				$scope.users = response.data.User;
-				$scope.visibleusers = response.data.User;
-				if ($scope.currentUser !== undefined) {
-					$scope.selectUser($scope.currentUser.username);
-				}
-				$scope.hide($ionicLoading);
-			});
-		})
-		
+		$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
+			$scope.users = response.data.User;
+			$scope.visibleusers = response.data.User;
+			if ($scope.currentUser !== undefined) {
+				$scope.selectUser($scope.currentUser.username);
+			}
+		});		
 	}
 	
 	$scope.selectUser = function(user) {
