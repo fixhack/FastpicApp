@@ -521,20 +521,15 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.columnNum = 3;
 	
 	$scope.loadCodes = function() {
-		
-		$cargaPropiedades.getServer().success(function(response) {
-			$rootScope.server = response.server;
-			$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
-				$scope.show($ionicLoading);
-				$scope.barcodes = response.data.Barcode;
-				$scope.visibleBarcodes = response.data.Barcode;
-				if ($scope.currentBarcode !== undefined) {
-					$scope.selectCode($scope.currentBarcode.barcode);
-				}
-				$scope.hide($ionicLoading); 
-			});
-		})
-		 
+		$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
+			$scope.show($ionicLoading);
+			$scope.barcodes = response.data.Barcode;
+			$scope.visibleBarcodes = response.data.Barcode;
+			if ($scope.currentBarcode !== undefined) {
+				$scope.selectCode($scope.currentBarcode.barcode);
+			}
+			$scope.hide($ionicLoading); 
+		});
 	}
 	
 	$scope.selectCode = function(codigo, openImages) {
