@@ -502,6 +502,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 {
 	var oldSoftBack = $rootScope.$ionicGoBack;
 	
+	$scope.data = {};
+	
 	$rootScope.$ionicGoBack = function() {
 		$ionicHistory.goBack();
 	};
@@ -548,6 +550,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 		
 	$scope.ScanBarcodesearch = function() {
+		$('#searchText').blur();
 		
 	      $cordovaBarcodeScanner.scan().then(function(barcodeData) 
 		  {
@@ -561,7 +564,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                             title: 'Operation canceled!'});
 					}
 				else {
-					$scope.captureCode = barcodeData.text;
+					$scope.data.captureCode = barcodeData.text;
 				}
 				//$scope.find(barcodeData.text);
 				$scope.searchBarcode();
@@ -572,7 +575,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.columnNum = 3;
 	
-	$scope.$watch('captureCode', function(newVal, oldVal) {
+	$scope.$watch('data.captureCode', function(newVal, oldVal) {
 		console.log(newVal);
 	});
 	
@@ -612,10 +615,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				
 			}
 		} else {
-			console.log($scope.captureCode);
+			console.log($scope.data.captureCode);
 			$scope.visibleBarcodes = [];
 			for (i=0; i < $scope.barcodes.length; i++) {
-				if( $scope.barcodes[i].barcode.indexOf($scope.captureCode) > -1 ) {	
+				if( $scope.barcodes[i].barcode.indexOf($scope.data.captureCode) > -1 ) {	
 					console.log($scope.barcodes[i].barcode);
 					$scope.visibleBarcodes.push($scope.barcodes[i]);
 					//$('#panel-info').addClass('hidden');

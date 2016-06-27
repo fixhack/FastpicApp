@@ -9,7 +9,7 @@
    <div class="item item-input-inset">
     	<label class="item-input-wrapper">
     	    <i class="icon ion-search placeholder-icon"></i>
-      		<input type="text" placeholder="Search" ng-change="searchBarcode(captureCode)" ng-model="captureCode">
+      		<input type="text" placeholder="Search" ng-change="searchBarcode(captureCode)" ng-model="data.captureCode" id="searchText">
    		 </label>
    		 <button class="button button-small" on-touch="ScanBarcodesearch()" >
       		Scan
