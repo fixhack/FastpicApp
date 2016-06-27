@@ -228,7 +228,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 
         UserService.signin(formData, successAuth, function () {
             var alertPopup = $ionicPopup.alert({
-                title: 'Login failed!'
+                                               title: '<b>Login failed!</b>',
+                                               template: '<div style="color:black"><center>User or Password incorrect. <br>Please verify!</center></div>'
             });
             $scope.hide($ionicLoading); 
         })
@@ -325,9 +326,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		          if (!$scope.data.name ||!$scope.data.user||!$scope.data.pass) {
 		            //don't allow the user to close unless he enters wifi password
 		            e.preventDefault();
+                      var alertPopup = $ionicPopup.alert({
+                                                       title: '<b>Operation failed!</b>',
+                                                       template: '<div style="color:black"><center>Enter all data to add user. <br>Please verify!</center></div>'
+                                                       });
 		          } else {
 		            console.log($scope.data.name,$scope.data.user,$scope.data.pass);
 		            $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, ultimoAcceso: null, username: $scope.data.user})
+                    
+                    var alertPopup = $ionicPopup.alert({
+                                                         title: '<b>Operation success!</b>',
+                                                         template: '<div style="color:black"><center>User has been added</center></div>'
+                                                         });
 		            $scope.loadUsers();
 		          }
 		        }
@@ -370,9 +380,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		          if (!$scope.data.pass) {
 		            //don't allow the user to close unless he enters wifi password
 		            e.preventDefault();
+                    var alertPopup = $ionicPopup.alert({
+                                            title: '<b>Operation failed!</b>',
+                                            template: '<div style="color:black"><center>Password required</center></div>'
+                                                       });
 		          } else {
 		            console.log($scope.data.pass,user,nombre);
 		            $http.post($rootScope.server + '/fastpic/barcode/user/update', { nombre: nombre, password:$scope.data.pass , ultimoAcceso: null, username: user})
+                    
+                    var alertPopup = $ionicPopup.alert({
+                                                         title: '<b>Operation success!</b>',
+                                                         template: '<div style="color:black"><center>Password has been changed</center></div>'
+                                                         });
 		          }
 		        }
 		      }
@@ -389,7 +408,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		console.log(id);
 		$http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: id })
     	.then(function(result){
-              var alertPopup = $ionicPopup.alert({title: 'User removed!'});
+            var alertPopup = $ionicPopup.alert({
+                                                title: '<b>Operation success!</b>',
+                                                template: '<div style="color:black"><center>User has been removed</center></div>'
+                                                });
     		$scope.loadUsers();
     	})
 	}
@@ -535,9 +557,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				console.log(s);
 				if (barcodeData.cancelled == true)
 					{
-					 var alertPopup = $ionicPopup.alert({
-			                title: 'Scan failed!'
-			            });
+                    var alertPopup = $ionicPopup.alert({
+                                            title: 'Operation canceled!'});
 					}
 				else {
 					$scope.captureCode = barcodeData.text;
@@ -616,9 +637,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 						console.log(s);
 						if (barcodeData.cancelled == true)
 							{
-							 var alertPopup = $ionicPopup.alert({
-					                title: 'Scan failed!'
-					            });
+                            var alertPopup = $ionicPopup.alert({
+                                            title: 'Operation canceled!'});
 							}
 						else {
 							$scope.saveCode(barcodeData.text);
@@ -633,7 +653,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.saveCode = function(id) {
 		$http.post($rootScope.server + '/fastpic/barcode/insert', { barcode: id, images: null })
         .then(function (result) {
-            var alertPopup = $ionicPopup.alert({title: 'Code added!'});
+            var alertPopup = $ionicPopup.alert({
+                                                 title: '<b>Operation success!</b>',
+                                                 template: '<div style="color:black"><center>Barcode has been added</center></div>'
+                                                 });
         	$scope.loadCodes();
         });
       //  $('#myModalAddCode').modal('hide');
@@ -652,7 +675,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         	console.log($scope.currentBarcode);
         	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
         	.then(function(result) {
-                  var alertPopup = $ionicPopup.alert({title: 'Code enabled!'});
+                var alertPopup = $ionicPopup.alert({
+                                                     title: '<b>Operation success!</b>',
+                                                     template: '<div style="color:black"><center>Barcode has been disabled</center></div>'
+                                                     });
         		$scope.loadCodes();
         	});
         });
@@ -669,7 +695,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	    	console.log($scope.currentBarcode);
 	    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
 	    	.then(function(result) {
-                  var alertPopup = $ionicPopup.alert({title: 'Code disabled!'});
+                var alertPopup = $ionicPopup.alert({
+                                                     title: '<b>Operation success!</b>',
+                                                     template: '<div style="color:black"><center>Barcode has been enabled</center></div>'
+                                                     });
 	    		$scope.loadCodes();
 	    	});
         });
@@ -709,7 +738,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
             //console.log($scope.currentBarcode);
             $http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
             .then(function(result) {
-                  var alertPopup = $ionicPopup.alert({title: 'Image uploaded!'});
+                  var alertPopup = $ionicPopup.alert({
+                                                     title: '<b>Operation success!</b>',
+                                                     template: '<div style="color:black"><center>Image has been uploaded</center></div>'
+                                                     });
         		$scope.selectCode($scope.currentBarcode.barcode);
         		//console.log("break3");
         	});
@@ -750,7 +782,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
     	console.log($scope.currentBarcode);
     	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
     	.then(function(result) {
-              var alertPopup = $ionicPopup.alert({title: 'Image removed!'});
+            var alertPopup = $ionicPopup.alert({
+                                                 title: '<b>Operation success!</b>',
+                                                 template: '<div style="color:black"><center>Image has been removed</center></div>'
+                                                 });
     		$scope.selectCode($scope.currentBarcode.barcode);
     	});
     }
