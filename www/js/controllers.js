@@ -123,16 +123,30 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 })
-.controller('ConfigCtrl', function($scope, $state, $cordovaFile, $rootScope) {
-	/*
+.controller('ConfigCtrl', function($ionicPlatform, $scope, $state, $cordovaFile, $rootScope, $ionicHistory) {
 	var doCustomBack= function() {
 	    // do something interesting here
 		//console.log($state.current.url);
 		if ($state.current.url == "/login"){
 			ionic.Platform.exitApp();
 		}
-		else{
+		else if ($state.current.url == "/principal.barcodes"){
 			$state.go('login');
+		}
+		else if ($state.current.url == "/barcodes"  ){
+			$state.go('login');
+		}
+		else if ($state.current.url == "/barcodesImgs" ){
+			$state.go('principal.barcodes');
+		}
+		else if ($state.current.url == "/users" ){
+			$state.go('principal.barcodes');
+		}
+		else if ($state.current.url == "/config"  ){
+			$state.go('login');
+		}
+		else{
+			$ionicHistory.goBack(); //$state.go('login');
 		}
 		//	$ionicHistory.goBack();
 		}; 
@@ -145,7 +159,6 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.$on('$destroy', function() {
 		deregisterHardBack();
 	});
-	*/
 	$scope.data = [];
 	
 	$scope.data.nombreServidor = $rootScope.server;
@@ -241,12 +254,13 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 })
-.controller('UsersCtrl', function($scope, $state, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout, $ionicLoading) 
+.controller('UsersCtrl', function($ionicPlatform, $scope, $ionicHistory, $state, $rootScope, UserService, $http, $cargaPropiedades, $ionicPopup, $timeout, $ionicLoading) 
 {
 /*
  * $cargaPropiedades.getServer().success(function(response) { $rootScope.server =
  * response.server; })
  */
+	
 	$scope.loadUsers = function() {
 		$http.get($rootScope.server + '/fastpic/barcode/user/getAllUsers').then(function(response) {
 			$scope.users = response.data.User;
@@ -425,19 +439,45 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 	
+	
+	var doCustomBack= function() {
+	    // do something interesting here
+		//console.log($state.current.url);
+		if ($state.current.url == "/login"){
+			ionic.Platform.exitApp();
+		}
+		else if ($state.current.url == "/principal.barcodes"){
+			$state.go('login');
+		}
+		else if ($state.current.url == "/barcodes" ){
+			$state.go('login');
+		}
+		else if ($state.current.url == "/barcodesImgs" ){
+			$state.go('principal.barcodes');
+		}
+		else if ($state.current.url == "/users" ){
+			$state.go('principal.barcodes');
+		}
+		else{
+			$ionicHistory.goBack(); //$state.go('login');
+		}
+		//	$ionicHistory.goBack();
+		}; 
+		
+	// registerBackButtonAction() returns a function which can be used to deregister it
+	var deregisterHardBack= $ionicPlatform.registerBackButtonAction(
+		doCustomBack, 101
+	);
+
+	$scope.$on('$destroy', function() {
+		deregisterHardBack();
+	});
+	
+
+	
 })
 .controller('BarcodesCtrl', function($scope, $filter, $rootScope, $http, UserService, $cargaPropiedades, $cordovaBarcodeScanner, $ionicPopup, $state, $ionicHistory, $ionicPlatform, $cordovaCamera ,$timeout, $ionicTabsDelegate, $ionicLoading) 
 {
-	 $scope.show = function() {
-		    $ionicLoading.show({
-		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
-		    });
-		  };
-
-		  $scope.hide = function(){
-		        $ionicLoading.hide();
-		  };
-		  
 	var oldSoftBack = $rootScope.$ionicGoBack;
 	
 	$rootScope.$ionicGoBack = function() {
@@ -448,6 +488,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		//console.log($state.current.url);
 		if ($state.current.url == "/login"){
 			ionic.Platform.exitApp();
+		}
+		else if ($state.current.url == "/principal.barcodes"){
+			$state.go('login');
+		}
+		else if ($state.current.url == "/barcodes" ){
+			$state.go('login');
+		}
+		else if ($state.current.url == "/barcodesImgs" ){
+			$state.go('principal.barcodes');
+		}
+		else if ($state.current.url == "/users" ){
+			$state.go('principal.barcodes');
 		}
 		else{
 			$ionicHistory.goBack(); //$state.go('login');
@@ -499,6 +551,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.columnNum = 3;
 	
+	$scope.$watch('captureCode', function(newVal, oldVal) {
+		console.log(newVal);
+	});
+	
 	$scope.loadCodes = function() {
 		$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
 			//$scope.show();
@@ -521,9 +577,6 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         });
 	}	
 	
-	$scope.searchEntrada = function(id) {
-			$scope.searchBarcode($scope.captureCode);
-	}
 	$scope.searchBarcode = function(id) {
 		if (id !== undefined) {
 			console.log(id);
