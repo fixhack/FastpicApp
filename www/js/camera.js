@@ -892,7 +892,7 @@
 					piePosition = 'left:0; top:0;';
 					break;
 				case 'rightTop' :
-					piePosition = 'right:0; top:0;';
+					piePosition = 'right:0; top:45px;';
 					break;
 				case 'leftBottom' :
 					piePosition = 'left:0; bottom:0;';

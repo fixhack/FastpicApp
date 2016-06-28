@@ -1,4 +1,4 @@
-<ion-view view-title="Slider" >
+<ion-view view-title="Slider"  on-tap="onTap()">
 	<ion-nav-buttons side="right" >
         <button  on-touch="ScanBarcode()" class="button button-icon icon ion-ios-barcode">Scan</button>
     </ion-nav-buttons> 
@@ -54,7 +54,7 @@
             /*margin-bottom: 0 !important;
             position: fixed;*/
             right: 0;
-            top: 0;
+            top: 40;
         }
         
         .camera_bar {
@@ -78,8 +78,7 @@
         }
     </style>
 </head>
-<body>
-    
+<body>    
     <div class="fluid_container" ng-init="initSlider()">
         <div class="camera_wrap camera_emboss pattern_1" id="camera_wrap_4">
             <div data-src="images/slides/bridge.jpg"></div>

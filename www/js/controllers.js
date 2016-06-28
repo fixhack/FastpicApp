@@ -1,6 +1,7 @@
 angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 .controller('SliderCtrl', function($scope, $state, $rootScope, UserService, $http, $ionicHistory, $ionicPlatform, $cordovaBarcodeScanner) {
 	$scope.initSlider = function() {
+		$scope.resume = 1;
 		$(function() {
 			$scope.slider = $('#camera_wrap_4').camera({
 				height: 'auto',
@@ -15,6 +16,21 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		});
 	};
 	
+	$scope.swipeLeft = function() {
+		console.log('hola');
+	}
+	
+	$scope.onTap = function() {
+		if ($scope.resume == 1) {
+			$scope.resume = 0;
+			$('#camera_wrap_4').cameraPause();
+		}
+		else {
+
+			$scope.resume = 1;
+			$('#camera_wrap_4').cameraResume();
+		}
+	}
 	var oldSoftBack = $rootScope.$ionicGoBack;
 	
 	$rootScope.$ionicGoBack = function() {
@@ -584,6 +600,9 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			//$scope.show();
 			$scope.barcodes = response.data.Barcode;
 			$scope.visibleBarcodes = response.data.Barcode;
+			$scope.visibleBarcodes = $scope.visibleBarcodes.sort(function (a, b) {
+				return b.barcode < a.barcode ? 1 : b.barcode > a.barcode ? -1 : 0;
+			});
 			if ($scope.currentBarcode !== undefined) {
 				$scope.selectCode($scope.currentBarcode.barcode);
 			}
