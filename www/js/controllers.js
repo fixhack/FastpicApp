@@ -3,6 +3,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.initSlider = function() {
 		$scope.resume = 1;
 		if ($rootScope.codeOutSide === undefined) {
+			$('#camera_wrap_4').append('<div data-src="images/slides/flex.png"></div>');
+			
 			$(function() {
 				$scope.slider = $('#camera_wrap_4').camera({
 					height: 'auto',
@@ -18,6 +20,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		}
 		else {
 			$scope.find($rootScope.codeOutSide);
+			$rootScope.codeOutSide = undefined;
 		}
 	};
 
