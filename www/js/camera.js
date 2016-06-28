@@ -126,7 +126,7 @@
 	var fakeHoverSelector = ('.camera_fakehover',wrap);
 	
 	fakeHover.append(
-		'<div class="camera_target"></div>'
+		'<div class="camera_target" <div class="camera_target" style="margin-top: 45px;"></div>'
 		);
 	if(opts.overlayer == true){
 		fakeHover.append(
