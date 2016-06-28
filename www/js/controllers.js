@@ -1,5 +1,5 @@
 angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
-.controller('SliderCtrl', function($scope, $state, $rootScope, UserService, $http, $ionicHistory, $ionicPlatform, $cordovaBarcodeScanner) {
+.controller('SliderCtrl', function($scope, $state, $rootScope, UserService, $http, $ionicHistory, $ionicPlatform, $ionicPopup, $cordovaBarcodeScanner) {
 	$scope.initSlider = function() {
 		$scope.resume = 1;
 		if ($rootScope.codeOutSide === undefined) {
@@ -81,11 +81,17 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	//$scope.uri = 'http://finanzas.seseqro.gob.mx/wildfly/fastpic-service/fastpic/barcode/getByCode';
 	
 	$scope.find = function(id) {
-            jQuery('#camera_wrap_4').cameraStop();
-            $("#camera_wrap_4").empty();
             //var getInfo = $.getJSON($scope.uri + '/' + id).done(function (data) {
             $http.get($rootScope.server + '/fastpic/barcode/getByCode/' + id).then(function(response) {
-                if (response.data.Barcode[0].images.length == 1) {
+                if (response.data.Barcode.length < 1) {
+                    var alertPopup = $ionicPopup.alert({
+                                                    title: '<b>Operation failed!</b>',
+                                                    template: '<div style="color:black"><center>This code has not been found</center></div>'
+                    });
+                }
+                else if (response.data.Barcode[0].images.length == 1) {
+                    jQuery('#camera_wrap_4').cameraStop();
+                    $("#camera_wrap_4").empty();
                     $('<div>', {
                         "data-src": 'data:image/jpeg;base64,' + response.data.Barcode[0].images[0].imageData
                     }).appendTo("#camera_wrap_4");
@@ -107,6 +113,9 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                     console.log("Solo tiene 1")
                 }
                 else if (response.data.Barcode[0].images.length > 1) {
+                    jQuery('#camera_wrap_4').cameraStop();
+                    $("#camera_wrap_4").empty();
+                                                                                   
                     for (i = 0; i < response.data.Barcode[0].images.length; i++) {
                         $('<div>', {
                             "data-src": 'data:image/jpeg;base64,' + response.data.Barcode[0].images[i].imageData
@@ -345,7 +354,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		        text: '<b>Save</b>',
 		        type: 'button-positive',
 		        onTap: function(e) {
-		          if (!$scope.data.name ||!$scope.data.user||!$scope.data.pass) {
+                  if (!$scope.data.name ||!$scope.data.user||!$scope.data.pass) {
 		            //don't allow the user to close unless he enters wifi password
 		            e.preventDefault();
                       var alertPopup = $ionicPopup.alert({
@@ -354,13 +363,29 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                        });
 		          } else {
 		            console.log($scope.data.name,$scope.data.user,$scope.data.pass);
-		            $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, ultimoAcceso: null, username: $scope.data.user})
-                    
-                    var alertPopup = $ionicPopup.alert({
+                      var $existUser = false;
+                      
+                      for (i=0; i < $scope.users.length; i++) {
+                        if($scope.users[i].username.toUpperCase() == $scope.data.user.toUpperCase()) {
+                            $existUser = true;
+                            break;
+                        }
+                      }
+                      
+                      if ($existUser) {
+                            var alertPopup = $ionicPopup.alert({
+                                                         title: '<b>Operation failed!</b>',
+                                                         template: '<div style="color:black"><center>This user already exists</center></div>'
+                                                         });
+                      } else {
+                            $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, ultimoAcceso: null, username: $scope.data.user})
+                      
+                            var alertPopup = $ionicPopup.alert({
                                                          title: '<b>Operation success!</b>',
                                                          template: '<div style="color:black"><center>User has been added</center></div>'
                                                          });
-		            $scope.loadUsers();
+                            $scope.loadUsers();
+                      }
 		          }
 		        }
 		      }
@@ -668,7 +693,23 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                             title: 'Operation canceled!'});
 							}
 						else {
-							$scope.saveCode(barcodeData.text);
+							var $existCode = false;
+                      
+                            for (i=0; i < $scope.barcodes.length; i++) {
+                                if($scope.barcodes[i].barcode == barcodeData.text){
+                                    $existCode = true;
+                                    break;
+                                }
+                            }
+                      
+                            if ($existCode) {
+                                var alertPopup = $ionicPopup.alert({
+                                                         title: '<b>Operation failed!</b>',
+                                                         template: '<div style="color:black"><center>This code already exists</center></div>'
+                                                         });
+                            } else {
+                                $scope.saveCode(barcodeData.text);
+                            }
 						}
 						//$scope.find(barcodeData.text);
 			      }, function(error) {
