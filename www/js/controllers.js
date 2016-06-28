@@ -13,8 +13,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				imagePath: '../images/',
 	            portrait: true
 			});
-		});
+		}
+		else {
+			$scope.find($rootScope.codeOutSide);
+		}
 	};
+
 	
 	$scope.swipeLeft = function() {
 		console.log('hola');
@@ -591,10 +595,6 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.columnNum = 3;
 	
-	$scope.$watch('data.captureCode', function(newVal, oldVal) {
-		console.log(newVal);
-	});
-	
 	$scope.loadCodes = function() {
 		$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
 			//$scope.show();
@@ -614,7 +614,10 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		if (openImages !== undefined) {
 			$state.go('barcodesImgs');
 		}
+		$scope.cod = codigo;
+		$rootScope.codeOutSide = codigo;
 		$http.get($rootScope.server + '/fastpic/barcode/getByCode/' + codigo).then(function(response) {
+			console.log($scope.cod);
         	$scope.currentBarcode = response.data.Barcode[0];
         	$rootScope.currentBarcode = $scope.currentBarcode;
         });
