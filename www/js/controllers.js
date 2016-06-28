@@ -2,16 +2,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 .controller('SliderCtrl', function($scope, $state, $rootScope, UserService, $http, $ionicHistory, $ionicPlatform, $cordovaBarcodeScanner) {
 	$scope.initSlider = function() {
 		$scope.resume = 1;
-		$(function() {
-			$scope.slider = $('#camera_wrap_4').camera({
-				height: 'auto',
-				loader: 'pie',
-				pagination: false,
-				thumbnails: false,
-				hover: false,
-				opacityOnGrid: false,
-				imagePath: '../images/',
-	            portrait: true
+		if ($rootScope.codeOutSide === undefined) {
+			$(function() {
+				$scope.slider = $('#camera_wrap_4').camera({
+					height: 'auto',
+					loader: 'pie',
+					pagination: false,
+					thumbnails: false,
+					hover: false,
+					opacityOnGrid: false,
+					imagePath: '../images/',
+		            portrait: true
+				});
 			});
 		}
 		else {
