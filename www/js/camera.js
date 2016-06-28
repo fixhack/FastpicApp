@@ -126,7 +126,7 @@
 	var fakeHoverSelector = ('.camera_fakehover',wrap);
 	
 	fakeHover.append(
-		'<div class="camera_target"></div>'
+		'<div class="camera_target" <div class="camera_target" style="margin-top: 45px;"></div>'
 		);
 	if(opts.overlayer == true){
 		fakeHover.append(
@@ -892,7 +892,7 @@
 					piePosition = 'left:0; top:0;';
 					break;
 				case 'rightTop' :
-					piePosition = 'right:0; top:0;';
+					piePosition = 'right:0; top:45px;';
 					break;
 				case 'leftBottom' :
 					piePosition = 'left:0; bottom:0;';

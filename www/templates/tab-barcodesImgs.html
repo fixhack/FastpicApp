@@ -1,21 +1,18 @@
-<ion-view cache-view="false" view-title="Barcodes">
+<ion-view cache-view="false" title="{{currentBarcode.barcode}}">
+	<ion-nav-title>{{currentBarcode.barcode}}</ion-nav-title>
 	<ion-nav-buttons side="right">
-        <button ng-click="slider()" class="button button-icon icon ion-images">Slider</button>
+        <button ng-click="slider(currentBarcode.barcode)" class="button button-icon icon ion-images"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="left">
-        <button ng-click="back()" class="button button-icon icon ion-chevron-left">Back</button>
+        <button ng-click="back()" class="button button-icon icon ion-chevron-left"></button>
     </ion-nav-buttons>
   <br></br>
    <ion-content ng-controller="BarcodesCtrl">
   <us-spinner></us-spinner>
-  <div class="row">
-	 <div class="col col-100">
-	 	<button type='button' class='button button-block button-balanced' id='add-code' on-touch="takePicture()">Upload Image</button>
-	  </div> 
+  
 	  <!-- <div class="col col-50">
 	 	<button type='button' class='button button-balanced' id='add-code' ng-click="addCode()">Change Order</button>
 	 	 </div> --> 
-	 </div>
 	<!-- <div class="row">
 	 <div class="col col-50" aling="right">
 	 	<button type='button' class='button button-assertive' id='add-code' ng-click="addCode()">Remove Image</button>
@@ -39,6 +36,11 @@
 			<ion-option-button class='button button-assertive' on-touch="delImg(image.imageId)">Remove</ion-option-button>
 		</ion-item>
 	</ion-list>
-  </ion-content> 
+  </ion-content>
+   <ion-footer-bar align-title="right">
+       <div class="buttons" align="right" >
+           <button ng-click="takePicture()" class="button button-icon ion-ios-upload-outline"></button>
+       </div>
+   </ion-footer-bar>
 </ion-view>
 

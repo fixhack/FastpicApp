@@ -1,6 +1,9 @@
 <ion-view title="FastPic" name="login-view" ng-init="initConfig()">
     <ion-nav-buttons side="right">
-        <button ng-click="slider()" class="button button-icon icon ion-images">Slider</button>
+        <button ng-click="slider()" class="button button-icon icon ion-images"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <button ng-click="config()" class="button button-icon icon ion-gear-a"></button>
     </ion-nav-buttons>
   <ion-content class="padding">
       <div class="list list-inset">
@@ -16,9 +19,4 @@
       <button class="button button-block button-positive" ng-click="submit()">Login</button>	  
 	  </div>
   </ion-content>
-  <ion-footer-bar align-title="right">
-  <div class="buttons" >
-    <button ng-click="config()" class="button button-icon ion-settings"></button>
-  </div>
-</ion-footer-bar>
 </ion-view>
