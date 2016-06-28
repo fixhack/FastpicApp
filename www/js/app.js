@@ -27,7 +27,7 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 		}, function(error) {
 			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://quer-app1:83/fastpic-service"}', true)
 			.then(function() {
-				$rootScope.server = "http://quer-app1:83/fastpic-service";
+				$rootScope.server = "http://quer-app1:8080/fastpic-service";
 			});
 		})
 	}
@@ -41,7 +41,7 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 		}, function(error) {
 			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://quer-app1:83/fastpic-service"}', true)
 			.then(function() {
-				$rootScope.server = "http://quer-app1:83/fastpic-service";
+				$rootScope.server = "http://quer-app1:8080/fastpic-service";
 			});
 		})
 	}
