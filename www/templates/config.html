@@ -1,4 +1,7 @@
-<ion-view view-title="Configuration" >
+<ion-view view-title="Server Configuration" >
+    <ion-nav-buttons side="left" >
+        <button  on-touch="goBackToLogin()" class="button button-icon icon ion-chevron-left"></button>
+    </ion-nav-buttons>
 	<ion-content>
 		<div class="list list-inset">
 				<label class="item item-input" /> 
@@ -6,9 +9,6 @@
 		</div>
 					<div class="row">
 				<button class="button button-block button-positive" on-touch="saveInfo()">Save</button>
-			</div>
-			<div class="row">
-				<button class="button button-block button-positive" on-touch="goBackToLogin()">Cancel</button>
 			</div>
 	</ion-content>
 </ion-view>

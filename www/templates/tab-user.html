@@ -1,6 +1,9 @@
-<ion-view view-title="Control Users" ng-init="loadUsers()" ng-controller="UsersCtrl">
+<ion-view view-title="Users Control" ng-init="loadUsers()" ng-controller="UsersCtrl">
 	<ion-nav-buttons side="right" >
-        <button on-touch="slider()" class="button button-icon icon ion-images">Slider</button>
+        <button on-touch="slider()" class="button button-icon icon ion-images"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <button ng-click="adduser()" class="button button-icon icon ion-plus"></button>
     </ion-nav-buttons>
     <ion-content class="padding" ng-controller="UsersCtrl">
 	<div class="item item-input-inset">
@@ -9,12 +12,6 @@
 	      		<input type="text" placeholder="Search" ng-change="searchUser(captureUser)" ng-model="captureUser">
 	   		 </label>
 	 </div>
-		<div class="row">
-			<div class="col col-100">
-				<button type='button' class='button button-block button-balanced' id='add-User' on-touch="adduser()">Add User</button>
-			</div>
-		</div>
-		 
 		<ion-list id="lista-codigos">
 			
 			<ion-item id='button-{{user.username}}' 

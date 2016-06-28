@@ -1,6 +1,9 @@
-<ion-view cache-view="false" view-title="Control Barcodes" ng-init="loadCodes()">
+<ion-view cache-view="false" view-title="Barcodes Control" ng-init="loadCodes()">
 	<ion-nav-buttons side="right">
-        <button ng-click="slider()" class="button button-icon icon ion-images">Slider</button>
+        <button ng-click="slider()" class="button button-icon icon ion-images"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <button ng-click="addCode()" class="button button-icon icon ion-plus"></button>
     </ion-nav-buttons>
   <ion-content class="padding">
   <!-- <div class="row"> -->
@@ -11,22 +14,19 @@
     	    <i class="icon ion-search placeholder-icon"></i>
       		<input type="text" placeholder="Search" ng-change="searchBarcode(captureCode)" ng-model="data.captureCode" id="searchText">
    		 </label>
-   		 <button class="button button-small" on-touch="ScanBarcodesearch()" >
-      		Scan
+   		 <button class="button button-icon icon ion-ios-barcode" on-touch="ScanBarcodesearch()" >
     	</button>
    </div>
  <!-- </div> -->
-   
-  <div class="row">
+
   	<us-spinner></us-spinner>
-	 <div class="col col-100">
+	 <!-- <div class="col col-100">
 	 	<button type='button' class='button button-block button-balanced' id='add-code' on-touch="addCode()">Add Code</button>
-	 </div>      
+	 </div>  -->
   	<!-- <div class="col col-50" id="disenableCodes">
        <button type="button" class='button button-balanced' id="enable-code" ng-if="currentBarcode !== undefined && currentBarcode.status == 'D'" ng-click="disableCode()">Enable Code</button>
        <button type='button' class='button button-assertive' id='disable-code' ng-if="currentBarcode !== undefined && (currentBarcode.status == 'E' || currentBarcode.status == null)" ng-click="enableCode()">Disable Code</button>
   	</div>-->
-  </div>
   <ion-list id="lista-codigos" >
     <ion-item listCanSwipe = "true"  id='button-{{codigo.barcode}}' 
     		   ng-if="codigo.status == null || codigo.status == 'E'" 
@@ -43,7 +43,7 @@
         <ion-delete-button class="button button-assertive"  ng-click="selectCode(codigo.barcode, 1)">Select</ion-delete-button>
         <ion-option-button  class='button button-balanced'  ng-click="disableCode(codigo.barcode)">Enable</ion-option-button>
     </ion-item>
-    <ion-item ng-if="barcodes.length < 1">No existen codigos</ion-item>
+    <ion-item ng-if="barcodes.length < 1">There are no codes</ion-item>
   </ion-list>
    
   </ion-content>

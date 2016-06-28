@@ -144,8 +144,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
     }
 	
 	$scope.logout = function() {
-		UserService.logout(successAuth);
-		$state.go('login');
+        UserService.logout(successAuth);
+        $state.go('login');
 	}
 	
 
@@ -453,14 +453,27 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.delUser = function(id) {
 		console.log(id);
-		$http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: id })
-    	.then(function(result){
-            var alertPopup = $ionicPopup.alert({
-                                                title: '<b>Operation success!</b>',
-                                                template: '<div style="color:black"><center>User has been removed</center></div>'
-                                                });
-    		$scope.loadUsers();
-    	})
+            var confirmPopup = $ionicPopup.confirm({
+                                                   title: '<b>Remove user</b>',
+                                                   template: '<div style="color:black"><center>Are you sure you want to remove this user?</center></div>'
+                                                   });
+            
+            confirmPopup.then(function(res) {
+                if(res) {
+                    $http.post($rootScope.server + '/fastpic/barcode/user/delete', { username: id })
+                    .then(function(result){
+                    
+                          var alertPopup = $ionicPopup.alert({
+                                                    title: '<b>Operation success!</b>',
+                                                    template: '<div style="color:black"><center>User has been removed</center></div>'
+                                                        });
+                          $scope.loadUsers();
+                    });
+                } else {
+                    console.log('You are not sure to delete user');
+                    $scope.loadUsers();
+                }
+            });
 	}
 	
 	$scope.searchUser = function(id) {
@@ -840,22 +853,34 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
     }
     
     $scope.delImg = function(id) {
-		for (e = 0; e < $scope.currentBarcode.images.length; e++) {
-			var currentBarcodeCode = $scope.currentBarcode.images[e].imageId;
-			var code = parseInt(id);
-			if (currentBarcodeCode == code) {
-				$scope.currentBarcode.images.splice(e,1);
-			}
-		}
-    	console.log($scope.currentBarcode);
-    	$http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
-    	.then(function(result) {
-            var alertPopup = $ionicPopup.alert({
-                                                 title: '<b>Operation success!</b>',
-                                                 template: '<div style="color:black"><center>Image has been removed</center></div>'
-                                                 });
-    		$scope.selectCode($scope.currentBarcode.barcode);
-    	});
+            
+        var confirmPopup = $ionicPopup.confirm({
+                                                   title: '<b>Remove image</b>',
+                                                   template: '<div style="color:black"><center>Are you sure you want to remove this image?</center></div>'
+                                                   });
+            
+            confirmPopup.then(function(res) {
+                if(res) {
+                    for (e = 0; e < $scope.currentBarcode.images.length; e++) {
+                        var currentBarcodeCode = $scope.currentBarcode.images[e].imageId;
+                        var code = parseInt(id);
+                        if (currentBarcodeCode == code) {
+                              $scope.currentBarcode.images.splice(e,1);
+                        }
+                    }
+                    console.log($scope.currentBarcode);
+                    $http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
+                    .then(function(result) {
+                          var alertPopup = $ionicPopup.alert({
+                                                title: '<b>Operation success!</b>',
+                                                template: '<div style="color:black"><center>Image has been removed</center></div>'
+                                                       });
+                          $scope.selectCode($scope.currentBarcode.barcode);
+                    });
+                } else {
+                    $scope.selectCode($scope.currentBarcode.barcode);
+                }
+        });
     }
 
     function showDataScreen(id) 
