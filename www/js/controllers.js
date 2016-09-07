@@ -143,6 +143,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		if (res !== undefined) {
 			$localStorage.token = res.access_token;
 		}
+        
         $state.go('login');
     }
 	
@@ -156,6 +157,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		//console.log($scope.server);	
 		$state.go('slider');
 	}
+    
 })
 .controller('ConfigCtrl', function($ionicPlatform, $scope, $state, $cordovaFile, $rootScope, $ionicHistory) {
 	var doCustomBack= function() {
@@ -229,7 +231,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 	
 	$scope.data = {};
-	
+    $rootScope.muestraOpUser = false;
+            
 	var doCustomBack= function() {
 	    // do something interesting here
 		//$state.go('login');
@@ -247,11 +250,27 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		deregisterHardBack();
 	});
 	
+    $scope.hideUsersTab = function() {
+        if ($scope.data.username.toUpperCase() == "ADMIN"){
+            $rootScope.muestraOpUser = true;
+        } else {
+            $rootScope.muestraOpUser = false;
+        }
+    }
+            
 	function successAuth(res) {
         $localStorage.token = res.access_token;
-		$state.go('principal.barcodes');
-		$scope.hide($ionicLoading); 
+        $scope.hideUsersTab();
+            
+            if ($rootScope.muestraOpUser == true){
+                $state.go('principalA.barcodes');
+            } else {
+                $state.go('principal.barcodes');
+            }
+		$scope.hide($ionicLoading);
+        
     }
+            
 	$scope.submit = function() {
 		$scope.show($ionicLoading);
 		
@@ -265,12 +284,15 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                title: '<b>Login failed!</b>',
                                                template: '<div style="color:black"><center>User or Password incorrect. <br>Please verify!</center></div>'
             });
+            
             $scope.hide($ionicLoading); 
         })
 	};
 	
 	var currentPlatform = ionic.Platform.platform();
 	
+    
+            
 	/*$cargaPropiedades.getServer().success(function(response) {
 		$rootScope.server = response.server;
 	})*/

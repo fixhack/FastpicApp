@@ -1,4 +1,5 @@
-<ion-view cache-view="false" view-title="Slider"  on-tap="onTap()">
+<ion-view cache-view="false" view-title="{{currentBarcode.barcode}}" on-tap="onTap()">
+    <ion-nav-title>{{currentBarcode.barcode}}</ion-nav-title>
 	<ion-nav-buttons side="right" >
         <button  on-touch="ScanBarcode()" class="button button-icon icon ion-ios-barcode"></button>
     </ion-nav-buttons> 
@@ -46,7 +47,6 @@
             top: 0;
             z-index: 0;
         }
-
         
         #camera_wrap_4 {
             bottom: 0;
