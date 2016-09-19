@@ -112,6 +112,14 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 	}
   })
 
+    .state('principalA', {
+        url: '/principalA',
+        templateUrl: 'templates/PrincipalA.html',
+        controller: "PrincipalCtrl",
+        data: {
+           requireAuth: true
+        }
+    })
   // Each tab has its own nav history stack:
 
   .state('principal.barcodes', {
@@ -123,7 +131,17 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
       }
     }
   })
-  
+
+  .state('principalA.barcodes', {
+    url: '/barcodes',
+    views: {
+      'tab-barcodes': {
+        templateUrl: 'templates/tab-barcodes.html',
+        controller: 'BarcodesCtrl'
+      }
+    }
+  })
+        
   .state('principal.users', {
     url: '/users',
     views: {
@@ -133,7 +151,15 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
       }
     }
   })
-  
+  .state('principalA.users', {
+    url: '/users',
+    views: {
+      'tab-users': {
+        templateUrl: 'templates/tab-user.html',
+        controller: "UsersCtrl"
+      }
+    }
+  })
     .state('barcodesImgs', {
     url: '/barcodesImgs',
     templateUrl: 'templates/tab-barcodesImgs.html',

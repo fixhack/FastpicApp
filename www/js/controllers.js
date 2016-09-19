@@ -96,7 +96,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                     jQuery('#camera_wrap_4').cameraStop();
                     $("#camera_wrap_4").empty();
                     $('<div>', {
-                        "data-src": 'data:image/jpeg;base64,' + response.data.Barcode[0].images[0].imageData
+                      "data-src": 'data:image/jpeg;base64,' + response.data.Barcode[0].images[0].imageData,
+                      "data-time": (response.data.Barcode[0].images[0].imageTimeShow * 1000)
                     }).appendTo("#camera_wrap_4");
 
                     $('#camera_wrap_4').camera({
@@ -121,7 +122,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                                                    
                     for (i = 0; i < response.data.Barcode[0].images.length; i++) {
                         $('<div>', {
-                            "data-src": 'data:image/jpeg;base64,' + response.data.Barcode[0].images[i].imageData
+                        "data-src": 'data:image/jpeg;base64,' + response.data.Barcode[0].images[i].imageData,
+                        "data-time": (response.data.Barcode[0].images[i].imageTimeShow * 1000)
                         }).appendTo("#camera_wrap_4");
                     }
                     $('#camera_wrap_4').camera({
@@ -143,6 +145,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		if (res !== undefined) {
 			$localStorage.token = res.access_token;
 		}
+        
         $state.go('login');
     }
 	
@@ -156,6 +159,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		//console.log($scope.server);	
 		$state.go('slider');
 	}
+    
 })
 .controller('ConfigCtrl', function($ionicPlatform, $scope, $state, $cordovaFile, $rootScope, $ionicHistory) {
 	var doCustomBack= function() {
@@ -229,7 +233,8 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	}
 	
 	$scope.data = {};
-	
+    $rootScope.muestraOpUser = false;
+            
 	var doCustomBack= function() {
 	    // do something interesting here
 		//$state.go('login');
@@ -247,11 +252,30 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		deregisterHardBack();
 	});
 	
+    $scope.hideUsersTab = function() {
+        if ($rootScope.user.userType.toUpperCase() == "A"){
+            $rootScope.muestraOpUser = true;
+        } else {
+            $rootScope.muestraOpUser = false;
+        }
+    }
+            
 	function successAuth(res) {
         $localStorage.token = res.access_token;
-		$state.go('principal.barcodes');
-		$scope.hide($ionicLoading); 
+        $rootScope.user = UserService.getTokenClaims();
+        console.log($rootScope.user.userType);
+            
+        $scope.hideUsersTab();
+            
+            if ($rootScope.muestraOpUser == true){
+                $state.go('principalA.barcodes');
+            } else {
+                $state.go('principal.barcodes');
+            }
+		$scope.hide($ionicLoading);
+        
     }
+            
 	$scope.submit = function() {
 		$scope.show($ionicLoading);
 		
@@ -265,12 +289,15 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                title: '<b>Login failed!</b>',
                                                template: '<div style="color:black"><center>User or Password incorrect. <br>Please verify!</center></div>'
             });
+            
             $scope.hide($ionicLoading); 
         })
 	};
 	
 	var currentPlatform = ionic.Platform.platform();
 	
+    
+            
 	/*$cargaPropiedades.getServer().success(function(response) {
 		$rootScope.server = response.server;
 	})*/
@@ -608,8 +635,12 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('slider');
 	}
 	$scope.back = function() {
-		//console.log($scope.server);	
-		$state.go('principal');
+		//console.log($scope.server);
+        if ($rootScope.user.userType.toUpperCase() == "A"){
+            $state.go('principalA.barcodes');
+        } else {
+            $state.go('principal.barcodes');
+        }
 	}
 		
 	$scope.ScanBarcodesearch = function() {
@@ -817,7 +848,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
         $cordovaCamera.getPicture(options).then(function(imgData) {
         	//console.log("break1");
             $scope.imgURI = imgData;
-            $scope.currentBarcode.images.push({ imageData: $scope.imgURI, imageOrder: ($scope.currentBarcode.images.length + 1)});
+            $scope.currentBarcode.images.push({ imageData: $scope.imgURI, imageOrder: ($scope.currentBarcode.images.length + 1), imageTimeShow: 5 });
             //console.log("break2");
             //console.log($scope.currentBarcode);
             $http.post($rootScope.server + '/fastpic/barcode/update', $scope.currentBarcode)
