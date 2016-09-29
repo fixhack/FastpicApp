@@ -408,7 +408,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                          template: '<div style="color:black"><center>This user already exists</center></div>'
                                                          });
                       } else {
-                            $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, ultimoAcceso: null, username: $scope.data.user})
+                      $http.put($rootScope.server + '/fastpic/barcode/user/insert', { nombre: $scope.data.name, password: $scope.data.pass, userType:"N", ultimoAcceso: null, username: $scope.data.user})
                       
                             var alertPopup = $ionicPopup.alert({
                                                          title: '<b>Operation success!</b>',
@@ -772,7 +772,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                  title: '<b>Operation success!</b>',
                                                  template: '<div style="color:black"><center>Barcode has been added</center></div>'
                                                  });
-        	$scope.loadCodes();
+        	$scope.selectCode(id, 1);
         });
       //  $('#myModalAddCode').modal('hide');
       //  $('#insertCode').val('');
