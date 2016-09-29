@@ -772,7 +772,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
                                                  title: '<b>Operation success!</b>',
                                                  template: '<div style="color:black"><center>Barcode has been added</center></div>'
                                                  });
-        	$scope.loadCodes();
+        	$scope.selectCode(id, 1);
         });
       //  $('#myModalAddCode').modal('hide');
       //  $('#insertCode').val('');
