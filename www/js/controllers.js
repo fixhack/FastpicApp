@@ -200,15 +200,18 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	$scope.data = [];
 	
 	$scope.data.nombreServidor = $rootScope.server;
-	
+    $scope.data.nombreDirectory = $rootScope.serverDirectory;
+    
 	$scope.saveInfo = function() {
 		if (ionic.Platform.isAndroid() || ionic.Platform.isIOS() || ionic.Platform.isIPad()) {
-			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "' + $scope.data.nombreServidor + '"}', true)
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "' + $scope.data.nombreServidor + '" "serverDirectory": "' + $scope.data.nombreDirectory + '" }', true)
 			.then(function(a) { 
-				console.log('readAsText Success'); 
+				console.log('readAsText Success');
+                console.log($scope.data.nombreServidor);
 			});
 		}
-		$rootScope.server = $scope.data.nombreServidor;
+        $rootScope.server = $scope.data.nombreServidor;
+        $rootScope.serverDirectory = $scope.data.nombreDirectory;
 		$state.go('login');
 	}
 	
@@ -216,7 +219,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$state.go('login');
 	}
 })
-.controller('LoginCtrl', function($scope, $state, $rootScope, UserService, $cordovaFile, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform, $ionicLoading) {
+.controller('LoginCtrl', function($scope, $state, $http, $rootScope, UserService, $cordovaFile, $cargaPropiedades, $localStorage, $ionicPopup, $ionicHistory, $ionicPlatform, $ionicLoading) {
 	  $scope.show = function() {
 		    $ionicLoading.show({
 		      template: '<p>Loading...</p><ion-spinner></ion-spinner>'
@@ -275,7 +278,64 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 		$scope.hide($ionicLoading);
         
     }
-            
+    
+    $scope.selectedTestAccount = null;
+    $scope.testAccounts = [];
+	
+	$cargaPropiedades.getServer().success(
+	function(response) 
+	{
+		$scope.comboShow=true;
+		  if(response.serverDirectory == "" || response.serverDirectory === undefined)
+		  {
+			$rootScope.server = response.server;
+		  /*  $http.get($rootScope.server + '/directory/services/getAllServices')
+		    .then(function(response) 
+		     {
+		    	for (i = 0; i < response.data.FastpicService.length; i++) 
+		    	{
+		    		if (response.data.FastpicService[i].status == "U") 
+		    		{
+		    		     $scope.testAccounts[i]= {serviceId: response.data.FastpicService[i].serviceId, serviceLocation: response.data.FastpicService[i].serviceLocation};
+		    		}
+		    	}
+		    	
+		    });*/
+			$scope.testAccounts[0]={serviceId: "No directory configured", serviceLocation: ""}
+			$scope.comboShow=false;
+		  }
+	  else{
+		  $rootScope.serverDirectory = response.serverDirectory;
+		    $http.get($rootScope.serverDirectory + '/directory/services/getAllServices')
+		    .then(function(response) 
+		     {
+		    	if(response.data.FastpicService.length != 0)
+		    	{
+		    		$scope.testAccounts[0]={serviceId: "Select Service ...", serviceLocation: ""}
+			    	for (i = 1; i  < response.data.FastpicService.length+1; i++) 
+			    	{
+			    		if (response.data.FastpicService[i-1].status == "U") 
+			    		{
+			    		     $scope.testAccounts[i]= {serviceId: response.data.FastpicService[i-1].serviceId, serviceLocation: response.data.FastpicService[i-1].serviceLocation};
+			    		}
+			    	}
+		    	}
+		    	else
+		    	{
+		    		$scope.testAccounts[0]={serviceId: "No services actives", serviceLocation: ""}
+		    	}
+		    	
+		    });
+	  	  }
+	})
+	
+	$scope.updateService = function() {
+		$scope.selectedTestAccount = this.selectedTestAccount;
+        $localStorage.serverDirectory = $scope.selectedTestAccount;
+		$rootScope.server = $localStorage.serverDirectory;
+		//console.log($localStorage.serverDirectory);
+	}
+    
 	$scope.submit = function() {
 		$scope.show($ionicLoading);
 		
@@ -669,7 +729,7 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 	
 	$scope.columnNum = 3;
 	
-	$scope.loadCodes = function() {
+	/*$scope.loadCodes = function() {
 		$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
 			//$scope.show();
 			$scope.barcodes = response.data.Barcode;
@@ -681,8 +741,49 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 				$scope.selectCode($scope.currentBarcode.barcode);
 			}
 		});
+	} */
+    
+   $scope.loadCodes = function() {
+			$http.get($rootScope.server + '/fastpic/barcode/getAllCodes').then(function(response) {
+				$http.post($rootScope.server + '/fastpic/barcode/query').then(function(res) {
+					$scope.barcodes = response.data.Barcode;
+					$scope.codesCount = res.data.cuenta
+					$scope.barcodes = $scope.barcodes.sort(function (a, b) {
+						return b.barcode < a.barcode ? 1 : b.barcode > a.barcode ? -1 : 0;
+					});
+                    $scope.visibleBarcodes = $scope.barcodes;
+                                                                              
+					for (i=0; i < $scope.barcodes.length; i++) {
+						for (j=0; j < $scope.codesCount.length; j++) {
+							if ($scope.codesCount[j].barcode === $scope.barcodes[i].barcode) {
+								$scope.barcodes[i] = { barcode: $scope.barcodes[i].barcode, createdBy: $scope.barcodes[i].createdBy, creationDate: $scope.barcodes[i].creationDate, images: $scope.barcodes[i].images, sinceCreationDate: $scope.barcodes[i].sinceCreationDate, status: $scope.barcodes[i].status, untilCreationDate: $scope.barcodes[i].untilCreationDate, imageCount: $scope.codesCount[j].imagesCount, barcodeForDisplay: stringEscape($scope.barcodes[i].barcode), barcodeForSend: encodeURIComponent($scope.barcodes[i].barcode) };
+								break;
+							}
+						}
+					}
+					if ($scope.currentBarcode !== undefined) {
+						$scope.selectCode(stringEscape($scope.barcodes[i].barcode), encodeURIComponent($scope.barcodes[i].barcode));
+					}
+					
+				})
+			});
 	}
 	
+	
+    function stringEscape(s) {
+	    s = s.split(' ').join('0x20');
+	    s = s.split(/\\/g).join('0x5C');
+	    s = s.split(/\n/g).join('0x10');
+	    s = s.split(/\t/g).join('0x0B');
+	    s = s.split("/").join('0x2F');
+	    s = s.split(/'/g).join('0x27');
+	    s = s.split(/"/g).join('0x22');
+	    
+	    return s;
+		//return s ? s.replace(' ', '0x20').replace(/\\/g,'0x5C').replace(/\n/g,'0x10').replace(/\t/g,'0x0B').replace("/",'0x2F').replace(/'/g,"0x27").replace(/"/g,'0x22') : s;
+	    //function hex(c) { var v = '0'+c.charCodeAt(0).toString(16); return '\\x'+v.substr(v.length-2); }
+	}
+    
 	$scope.selectCode = function(codigo, openImages) {
 		//console.log($ionicTabsDelegate);
 		if (openImages !== undefined) {
@@ -712,11 +813,11 @@ angular.module('starter.controllers', ['ui.router', 'oc.lazyLoad','ngCordova'])
 			}
 		} else {
 			console.log($scope.data.captureCode);
-			$scope.visibleBarcodes = [];
+			$scope.barcodes = [];
 			for (i=0; i < $scope.barcodes.length; i++) {
 				if( $scope.barcodes[i].barcode.indexOf($scope.data.captureCode) > -1 ) {	
 					console.log($scope.barcodes[i].barcode);
-					$scope.visibleBarcodes.push($scope.barcodes[i]);
+					$scope.barcodes.push($scope.barcodes[i]);
 					//$('#panel-info').addClass('hidden');
 				    //$('#lista-codigos').append("<button type='button' class='list-group-item' id-value='" + $scope.barcodes[i].barcode + "' id='button" + $scope.barcodes[i].barcode + "'>" + $scope.barcodes[i].barcode + "</button>");
 				}

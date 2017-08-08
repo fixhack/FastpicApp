@@ -4,8 +4,12 @@
     </ion-nav-buttons>
 	<ion-content>
 		<div class="list list-inset">
-				<label class="item item-input" /> 
-				<input type="text" placeholder="Server:" ng-model="data.nombreServidor"/>
+				<label class="item item-input">
+                    <input type="text" placeholder="Server:" ng-model="data.nombreServidor"/>
+                </label>
+                <label class="item item-input">
+                    <input type="text" placeholder="Directory:" ng-model="data.nombreDirectory"/>
+                </label>
 		</div>
 					<div class="row">
 				<button class="button button-block button-positive" on-touch="saveInfo()">Save</button>

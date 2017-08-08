@@ -25,9 +25,9 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 			$rootScope.server = items.server;
 			}, function(err) {})
 		}, function(error) {
-			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://quer-app1:8080/fastpic-service"}', true)
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "" "serverDirectory": "http://db.teqsoft.xyz:8090"}', true)
 			.then(function() {
-				$rootScope.server = "http://quer-app1:8080/fastpic-service";
+				$rootScope.serverDirectory = "http://db.teqsoft.xyz:8090";
 			});
 		})
 	}
@@ -39,9 +39,9 @@ angular.module('starter', ['ionic','oc.lazyLoad','ui.router', 'starter.controlle
 			$rootScope.server = items.server;
 			}, function(err) {})
 		}, function(error) {
-			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{"server": "http://quer-app1:8080/fastpic-service"}', true)
+			$cordovaFile.writeFile(cordova.file.dataDirectory, "fastpic.conf", '{ "server": "" "serverDirectory": "http://db.teqsoft.xyz:8090"}', true)
 			.then(function() {
-				$rootScope.server = "http://quer-app1:8080/fastpic-service";
+				$rootScope.serverDirectory = "http://db.teqsoft.xyz:8090";
 			});
 		})
 	}

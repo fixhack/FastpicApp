@@ -7,8 +7,8 @@
     </ion-nav-buttons>
   <ion-content class="padding">
       <div class="list list-inset">
-	  <div class="login-logo" align="center"><img src="img/flex-n-gate.png" ></img></div>
-	  <br> </br>
+          <div class="login-logo" align="center"><img src="img/flex-n-gate.png" ></img></div>
+          <br> </br>
           <label class="item item-input">
               <input type="text" placeholder="Username" ng-model="data.username">
           </label>
@@ -16,7 +16,12 @@
               <input type="password" placeholder="Password" ng-model="data.password">
           </label>
       </div>
-      <button class="button button-block button-positive" ng-click="submit()">Login</button>	  
+      <div class="form-group has-feedback" >
+          <select style="width: 300px;" ng-show="comboShow" ng-model="selectedTestAccount" ng-change="updateService()">
+              <option ng-repeat="n in testAccounts" value="{{n.serviceLocation}}">{{n.serviceId}}</option>
+          </select>
+      </div>
+      <button class="button button-block button-positive" ng-click="submit()">Login</button>
 	  </div>
   </ion-content>
 </ion-view>
